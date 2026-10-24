@@ -1,0 +1,31 @@
+# Binarios executaveis e pacotes pesados
+*.exe
+*.o
+*.out
+app_sensor
+app_sensor_arm
+*.tar.gz
+*.zip
+
+# Arquivos temporarios de compilacao LaTeX
+*.aux
+*.log
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Ambientes virtuais e caches do Python
+__pycache__/
+*.pyc
+.env
+venv/
+
+# Caches de IDEs
+.vscode/
+.idea/
+
+# Dados gerados de telemetria local
+*.csv
+mock_sensor_raw.txt
+--samples
