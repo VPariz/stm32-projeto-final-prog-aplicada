@@ -158,6 +158,12 @@ make
 
 ```text
 projeto_final/
+├── entregas/                              # Pastas organizadas por entregavel (0 a 4)
+│   ├── entrega0_conexao_fisica/           # Fotos e mapeamento dos pinos 3,3V, GND e ADC
+│   ├── entrega1_classe_sensor_doxygen/    # Classe C++ IrObstacleSensor e Doxyfile
+│   ├── entrega2_execucao_embarcada/       # Makefile e scripts de cross-compilacao ARM
+│   ├── entrega3_telemetria_udp/           # Classe UdpTransmitter e especificacao UDP
+│   └── entrega4_interface_grafica/        # Dashboard grafico em Python e simulador
 ├── docs/                                  # Evidencias e documentacao Doxygen
 │   ├── conexao_placa_desligada.jpg        # Conexao nos headers com kit desligado
 │   ├── conexao_sensor_pinos.jpg           # Conexao no sensor HW-201
