@@ -5,27 +5,20 @@
 CXX ?= g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -O2
 
-# Detecta sistema operacional para ligacao de bibliotecas (WinSock no Windows)
-ifeq ($(OS),Windows_NT)
-    LDLIBS = -lws2_32
-else
-    LDLIBS =
-endif
-
 # Toolchain de Cross-Compilacao para o processador ARM Cortex-A7 da STM32MP1
 CROSS_PREFIX ?= arm-buildroot-linux-gnueabihf-
 CROSS_CXX = $(CROSS_PREFIX)g++
 
-SRCS = src/IrObstacleSensor.cpp src/UdpTransmitter.cpp src/main.cpp
+SRCS = src/IrObstacleSensor.cpp src/main.cpp
 TARGET_NATIVE = app_sensor
 TARGET_ARM = app_sensor_arm
 
-.PHONY: all cross doc clean run
+.PHONY: all cross doc clean
 
 all: $(TARGET_NATIVE)
 
 $(TARGET_NATIVE): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 	@echo [OK] Binario nativo para PC gerado com sucesso: $(TARGET_NATIVE)
 
 cross: $(SRCS)

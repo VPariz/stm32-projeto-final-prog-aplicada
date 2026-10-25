@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['readraw_0',['readRaw',['../class_ir_obstacle_sensor.html#af543473c547f5ae4b7def573440527aa',1,'IrObstacleSensor']]],
-  ['readvoltage_1',['readVoltage',['../class_ir_obstacle_sensor.html#a0317c28d3ca5c0eb54c5413645ce15e1',1,'IrObstacleSensor']]]
+  ['setdevicepath_0',['setDevicePath',['../class_ir_obstacle_sensor.html#aa3e69c7cbb246226bde3b4cf7764aa07',1,'IrObstacleSensor']]],
+  ['setthreshold_1',['setThreshold',['../class_ir_obstacle_sensor.html#aa4dfbf740d40793bca1b222679789767',1,'IrObstacleSensor']]]
 ];

@@ -48,7 +48,6 @@ echo "[BUILD] Compilando aplicacao para o target ARM..."
 $CROSS_CXX -Wall -Wextra -std=c++17 -O2 \
     -Iinclude \
     src/IrObstacleSensor.cpp \
-    src/UdpTransmitter.cpp \
     src/main.cpp \
     -o app_sensor_arm
 

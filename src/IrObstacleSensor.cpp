@@ -3,6 +3,9 @@
 // SE/3 - Eletronica - Programacao Aplicada
 
 #include "IrObstacleSensor.hpp"
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 IrObstacleSensor::IrObstacleSensor(
     const std::string& path,
@@ -108,4 +111,14 @@ const std::string& IrObstacleSensor::getDevicePath() const {
 
 void IrObstacleSensor::setDevicePath(const std::string& newPath) {
     devicePath = newPath;
+}
+
+void IrObstacleSensor::runMonitoringLoop(int maxSamples, int intervalMs) {
+    int count = 0;
+    while (maxSamples == 0 || count < maxSamples) {
+        readRaw();
+        std::cout << "[" << std::setw(4) << std::setfill('0') << ++count << "] "
+                  << getFormattedStatus() << "\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+    }
 }

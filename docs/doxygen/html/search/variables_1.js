@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['initialized_0',['initialized',['../class_udp_transmitter.html#a290e2f15a646269e6b50141d50b91914',1,'UdpTransmitter']]]
+  ['lastrawvalue_0',['lastRawValue',['../class_ir_obstacle_sensor.html#a5ebf7dfb59e041e330e0fde29a25ea15',1,'IrObstacleSensor']]]
 ];

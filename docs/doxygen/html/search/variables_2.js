@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lastrawvalue_0',['lastRawValue',['../class_ir_obstacle_sensor.html#a5ebf7dfb59e041e330e0fde29a25ea15',1,'IrObstacleSensor']]]
+  ['maxadcresolution_0',['maxAdcResolution',['../class_ir_obstacle_sensor.html#abdec55fb39558a968c3cb1f478063045',1,'IrObstacleSensor']]]
 ];

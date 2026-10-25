@@ -126,6 +126,13 @@ public:
      * @param newPath Novo caminho para o arquivo.
      */
     void setDevicePath(const std::string& newPath);
+
+    /**
+     * @brief Executa o loop de leitura continua do sensor exibindo os dados no terminal.
+     * @param maxSamples Numero de leituras a realizar (0 = loop infinito continuo).
+     * @param intervalMs Intervalo em milissegundos entre cada leitura (padrao: 250 ms).
+     */
+    void runMonitoringLoop(int maxSamples = 0, int intervalMs = 250);
 };
 
 #endif // IR_OBSTACLE_SENSOR_HPP

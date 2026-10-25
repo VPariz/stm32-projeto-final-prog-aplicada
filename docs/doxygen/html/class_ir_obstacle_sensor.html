@@ -152,6 +152,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6beaf91fc19286baa4d17b9c79466518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtem o caminho configurado para o arquivo de leitura.  <br /></td></tr>
 <tr class="memitem:aa3e69c7cbb246226bde3b4cf7764aa07" id="r_aa3e69c7cbb246226bde3b4cf7764aa07"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aa3e69c7cbb246226bde3b4cf7764aa07">setDevicePath</a> (const std::string &amp;newPath)</td></tr>
 <tr class="memdesc:aa3e69c7cbb246226bde3b4cf7764aa07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Altera o caminho do arquivo de leitura em tempo de execucao.  <br /></td></tr>
+<tr class="memitem:aa34b1b88690a2df26656711b10065bf5" id="r_aa34b1b88690a2df26656711b10065bf5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aa34b1b88690a2df26656711b10065bf5">runMonitoringLoop</a> (int maxSamples=0, int intervalMs=250)</td></tr>
+<tr class="memdesc:aa34b1b88690a2df26656711b10065bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executa o loop de leitura continua do sensor exibindo os dados no terminal.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -458,6 +460,36 @@ Private Attributes</h2></td></tr>
 
 <p>Atualiza a leitura e retorna a tensao calculada. </p>
 <dl class="section return"><dt>Returns</dt><dd>Tensao atualizada em Volts. </dd></dl>
+
+</div>
+</div>
+<a id="aa34b1b88690a2df26656711b10065bf5" name="aa34b1b88690a2df26656711b10065bf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa34b1b88690a2df26656711b10065bf5">&#9670;&#160;</a></span>runMonitoringLoop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void IrObstacleSensor::runMonitoringLoop </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxSamples</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>intervalMs</em></span><span class="paramdefsep"> = </span><span class="paramdefval">250</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Executa o loop de leitura continua do sensor exibindo os dados no terminal. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">maxSamples</td><td>Numero de leituras a realizar (0 = loop infinito continuo). </td></tr>
+    <tr><td class="paramname">intervalMs</td><td>Intervalo em milissegundos entre cada leitura (padrao: 250 ms). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
