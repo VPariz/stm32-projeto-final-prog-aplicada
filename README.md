@@ -15,6 +15,20 @@
 
 ---
 
+## 📂 Organizacao Modular por Entregavel (Acesso Direto)
+
+Para facilitar a correcao e o foco em cada etapa do projeto, cada entregavel possui sua propria pasta dedicada dentro de [`entregas/`](entregas/):
+
+| Etapa | Pasta Dedicada | Conteudo Principal |
+| :--- | :--- | :--- |
+| **Entrega 0** | [`entregas/entrega0_conexao_fisica/`](entregas/entrega0_conexao_fisica/) | Fotos da conexao nos headers (3,3 V, GND e ADC) com o kit desligado. |
+| **Entrega 1** | **[`entregas/entrega1_classe_sensor_doxygen/`](entregas/entrega1_classe_sensor_doxygen/)** | **Classe C++ (`IrObstacleSensor`) com leitura IIO da placa + Doxygen.** |
+| **Entrega 2** | [`entregas/entrega2_execucao_embarcada/`](entregas/entrega2_execucao_embarcada/) | Scripts de compilacao cruzada ARM (`arm-buildroot-linux-gnueabihf`) e deploy. |
+| **Entrega 3** | [`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/) | Classe C++ `UdpTransmitter`, receptor de teste e especificacao do protocolo UDP. |
+| **Entrega 4** | [`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/) | Dashboard grafico em Python (tempo real, historico de 60s, alerta e log CSV). |
+
+---
+
 ## 🎯 Contexto e Missao do Projeto
 No ambito das operacoes logisticas do Exercito Brasileiro, o transporte de cargas sensiveis exige monitoramento remoto, continuo e discreto contra tentativas de violacao, abertura nao autorizada ou comprometimento fisico.
 
