@@ -16,10 +16,30 @@ IrObstacleSensor::IrObstacleSensor(
     maxAdcResolution(maxAdc) {
 }
 
+bool IrObstacleSensor::autoDetectIioChannel() {
+    for (int dev = 0; dev <= 1; ++dev) {
+        for (int ch = 0; ch < 20; ++ch) {
+            std::string candidate = "/sys/bus/iio/devices/iio:device" + std::to_string(dev) +
+                                    "/in_voltage" + std::to_string(ch) + "_raw";
+            std::ifstream testFile(candidate);
+            if (testFile.is_open()) {
+                devicePath = candidate;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int IrObstacleSensor::readRaw() {
     std::ifstream file(devicePath);
     if (!file.is_open()) {
-        throw std::runtime_error("Falha ao abrir canal IIO no caminho: " + devicePath);
+        if (autoDetectIioChannel()) {
+            file.open(devicePath);
+        }
+        if (!file.is_open()) {
+            throw std::runtime_error("Falha ao abrir canal IIO no caminho: " + devicePath);
+        }
     }
 
     int rawValue = 0;

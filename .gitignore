@@ -29,3 +29,14 @@ venv/
 *.csv
 mock_sensor_raw.txt
 --samples
+
+# Materiais de estudo locais, apostilas LaTeX e imagens brutas de rascunho
+*.tex
+*.pdf
+latex_assets/
+Screenshot*.png
+WhatsApp*.jpeg
+crop_*.png
+board_wires_top.png
+sensor_wires_top.png
+test_diag.png

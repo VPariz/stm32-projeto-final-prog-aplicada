@@ -2,6 +2,7 @@ var class_ir_obstacle_sensor =
 [
     [ "IrObstacleSensor", "class_ir_obstacle_sensor.html#af18a5d2b5066a34315309c894b9c71cb", null ],
     [ "~IrObstacleSensor", "class_ir_obstacle_sensor.html#a220c9530f223e4c8718633d09be0eb27", null ],
+    [ "autoDetectIioChannel", "class_ir_obstacle_sensor.html#ac23aef6db90b0b7a35357a4317a0ceac", null ],
     [ "getDevicePath", "class_ir_obstacle_sensor.html#a6beaf91fc19286baa4d17b9c79466518", null ],
     [ "getFormattedStatus", "class_ir_obstacle_sensor.html#a417cb532f44ff4a1c92ab30d4c90999a", null ],
     [ "getLastRawValue", "class_ir_obstacle_sensor.html#aef3ee6ab192583a9aa58ccfe18994a5e", null ],

@@ -153,6 +153,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa3e69c7cbb246226bde3b4cf7764aa07" id="r_aa3e69c7cbb246226bde3b4cf7764aa07"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aa3e69c7cbb246226bde3b4cf7764aa07">setDevicePath</a> (const std::string &amp;newPath)</td></tr>
 <tr class="memdesc:aa3e69c7cbb246226bde3b4cf7764aa07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Altera o caminho do arquivo de leitura em tempo de execucao.  <br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ac23aef6db90b0b7a35357a4317a0ceac" id="r_ac23aef6db90b0b7a35357a4317a0ceac"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ac23aef6db90b0b7a35357a4317a0ceac">autoDetectIioChannel</a> ()</td></tr>
+<tr class="memdesc:ac23aef6db90b0b7a35357a4317a0ceac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Procura automaticamente um canal IIO valido na placa caso o canal padrao nao exista.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-attribs" class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a4ff3d04eea07f561e05315f5eeb142c5" id="r_a4ff3d04eea07f561e05315f5eeb142c5"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="#a4ff3d04eea07f561e05315f5eeb142c5">devicePath</a></td></tr>
@@ -242,6 +247,34 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="ac23aef6db90b0b7a35357a4317a0ceac" name="ac23aef6db90b0b7a35357a4317a0ceac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac23aef6db90b0b7a35357a4317a0ceac">&#9670;&#160;</a></span>autoDetectIioChannel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool IrObstacleSensor::autoDetectIioChannel </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Procura automaticamente um canal IIO valido na placa caso o canal padrao nao exista. </p>
+<dl class="section return"><dt>Returns</dt><dd>true se encontrou um canal alternativo valido no sysfs; false caso contrario. </dd></dl>
+
+</div>
+</div>
 <a id="a6beaf91fc19286baa4d17b9c79466518" name="a6beaf91fc19286baa4d17b9c79466518"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6beaf91fc19286baa4d17b9c79466518">&#9670;&#160;</a></span>getDevicePath()</h2>
 

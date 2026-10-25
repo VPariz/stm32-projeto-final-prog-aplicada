@@ -8,33 +8,8 @@
 
 ---
 
-## 👥 Integrantes do Grupo
-* **Joao Victor Pariz**
-* [Integrante 2]
-* [Integrante 3]
-
----
-
-## 📅 Cronograma Oficial e Critérios de Pontuação (Classroom 2026)
-
-Conforme comunicado oficial divulgado pela Seção de Engenharia Elétrica (SE/3):
-* **Escala Global da Matéria:** 10.000 pontos no total.
-* **Projeto Final (VF):** 4.000 pontos no total, distribuídos igualmente em **5 entregas parciais de 800 pontos cada**.
-* **Listas de Exercícios (VC / VEs):** 6.000 pontos no total.
-
-| Etapa | Data / Prazo Limite | Pontos | Descrição no Classroom | Status / O que falta |
-| :---: | :---: | :---: | :--- | :--- |
-| **Entrega 0** | 19/10/2026 | Concluída | Conexão física com o kit desligado e fotos dos headers | ✅ Concluída |
-| **Entrega 1** | **26/10/2026, 23:59** | **800 pts** | Classe C++ (`IrObstacleSensor`) com Doxygen no Git. **"Precisa funcionar na placa, mesmo q leia errado."** | 🚀 **Pronto p/ envio Git** |
-| **Entrega 2** | **02/11/2026, 23:59** | **800 pts** | Programa funcional no kit STM32MP157D-DK1 com instruções de compilação/execução no README | 🟡 Código pronto; falta teste de bancada |
-| **Entrega 3** | **09/11/2026, 23:59** | **800 pts** | Envio da leitura via pacotes UDP para servidor e documentação do protocolo | 🟡 Código e scripts prontos |
-| **Entrega 4** | **16/11/2026, 23:59** | **800 pts** | Interface gráfica (GUI) no PC para visualização em tempo real | 🟡 Dashboard Python pronto |
-| **Entrega 5** | **16/11/2026, 23:59** | **800 pts** | Vídeo de demonstração do sistema operando de ponta a ponta e apresentação | 🟡 Roteiro pronto |
-
-> [!IMPORTANT]
-> **Esclarecimento Oficial da Entrega 1 (26 de Outubro):**
-> Em resposta a questionamento de alunos no Google Classroom (*"Para essa entrega, é necessário que a classe funcione na placa ou basta funcionar no computador com dados simulados?"*), a coordenação docente respondeu enfaticamente: **"Precisa funcionar na placa, mesmo q leia errado."**
-> Portanto, além de ser compilável e documentada no Doxygen, a classe `IrObstacleSensor` deve realizar a leitura atômica do nó virtual `/sys/bus/iio/devices/iio:device0/in_voltageX_raw` no Linux embarcado da placa.
+## 👥 Responsável pelo Desenvolvimento
+* **Joao Victor Pariz** — Graduação em Engenharia Elétrica / Eletrônica (SE/3 - IME)
 
 ---
 
@@ -277,7 +252,6 @@ projeto_final/
 │   └── gui_dashboard.py                   # Interface Grafica (GUI) em Python
 ├── Doxyfile                               # Configuracao do Doxygen
 ├── Makefile                               # Build nativo e cross-compilacao ARM
-├── Guia_Definitivo_Projeto_Completo.pdf   # Manual didatico completo (15 paginas)
 └── README.md                              # Documento central do projeto
 ```
 

@@ -31,6 +31,12 @@ private:
     double referenceVoltage;     /**< Tensao de referencia eletrica (3.3 V) */
     int maxAdcResolution;        /**< Resolucao maxima da escala do ADC (ex: 4095 para 12 bits) */
 
+    /**
+     * @brief Procura automaticamente um canal IIO valido na placa caso o canal padrao nao exista.
+     * @return true se encontrou um canal alternativo valido no sysfs; false caso contrario.
+     */
+    bool autoDetectIioChannel();
+
 public:
     /**
      * @brief Construtor da classe com parametros padrao configuraveis.
