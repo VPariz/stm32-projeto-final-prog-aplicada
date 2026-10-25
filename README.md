@@ -8,8 +8,10 @@
 
 ---
 
-## 👥 Responsável pelo Desenvolvimento
-* **Joao Victor Pariz** — Graduação em Engenharia Elétrica / Eletrônica (SE/3 - IME)
+## 👥 Integrantes do Grupo
+* **Joao Victor Pariz**
+* **Mateus Roma**
+* **Daniel Coimbra**
 
 ---
 
