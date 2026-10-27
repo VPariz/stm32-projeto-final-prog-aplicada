@@ -1,183 +1,125 @@
-# Monitoramento Inteligente de Carga Sensivel (IoT)
+# Monitoramento IoT com STM32MP157D e Linux IIO
 
-**Instituto Militar de Engenharia — IME**  
-**Secao de Engenharia Eletrica — SE/3**  
-**Disciplina:** Programacao Aplicada a Engenharia Eletrica (SE/3 - Eletronica)  
-**Hardware Alvo:** Kit Discovery STMicroelectronics STM32MP157D-DK1 (Linux Embarcado)  
-**Sensor Alocado (Nº 3):** Modulo Sensor de Obstaculo Infravermelho Reflexivo Digital (HW-201 / LM393)  
+[![Hardware](https://img.shields.io/badge/Placa-STM32MP157D--DK1-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white)](https://www.st.com/en/evaluation-tools/stm32mp157d-dk1.html)
+[![Kernel](https://img.shields.io/badge/Kernel-Linux_IIO-E95420?style=flat-square&logo=linux&logoColor=white)](https://www.kernel.org/doc/html/latest/driver-api/iio/index.html)
+[![Linguagem](https://img.shields.io/badge/C%2B%2B-17_POO-00599C?style=flat-square&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
+[![Dashboard](https://img.shields.io/badge/Interface-Python_Tkinter-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-green.svg?style=flat-square)](LICENSE)
 
----
+Sistema embarcado para monitoramento de integridade e detecção de violação física em cargas sensíveis, executando diretamente em espaço de usuário sobre Linux Embarcado na placa **STM32MP157D-DK1** (processador dual Cortex-A7 a 800 MHz + coprocessador Cortex-M4 a 209 MHz).
 
-## 👥 Integrantes do Grupo
-* **Joao Victor Pariz**
-* **Mateus Roma**
-* **Daniel Coimbra**
+O projeto realiza a leitura de sensores infravermelhos reflexivos através do subsistema do Kernel **Linux Industrial I/O (IIO)**, processa os dados com uma classe em C++17 orientada a objetos, transmite o estado via **sockets UDP** de baixa latência e exibe os gráficos em tempo real em um **dashboard em Python**.
 
 ---
 
-## 📂 Organizacao Modular por Entregavel (Acesso Direto)
-
-Para facilitar a correcao e o foco em cada etapa do projeto, cada entregavel possui sua propria pasta dedicada dentro de [`entregas/`](entregas/):
-
-| Etapa | Pasta Dedicada | Conteudo Principal |
-| :--- | :--- | :--- |
-| **Entrega 0** | [`entregas/entrega0_conexao_fisica/`](entregas/entrega0_conexao_fisica/) | Fotos da conexao nos headers (3,3 V, GND e ADC) com o kit desligado. |
-| **Entrega 1** | **[`entregas/entrega1_classe_sensor_doxygen/`](entregas/entrega1_classe_sensor_doxygen/)** | **Classe C++ (`IrObstacleSensor`) com leitura IIO da placa + Doxygen.** |
-| **Entrega 2** | [`entregas/entrega2_execucao_embarcada/`](entregas/entrega2_execucao_embarcada/) | Scripts de compilacao cruzada ARM (`arm-buildroot-linux-gnueabihf`) e deploy. |
-| **Entrega 3** | [`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/) | Classe C++ `UdpTransmitter`, receptor de teste e especificacao do protocolo UDP. |
-| **Entrega 4** | [`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/) | Dashboard grafico em Python (tempo real, historico de 60s, alerta e log CSV). |
-
----
-
-## 🎯 Contexto e Missao do Projeto
-No ambito das operacoes logisticas do Exercito Brasileiro, o transporte de cargas sensiveis exige monitoramento remoto, continuo e discreto contra tentativas de violacao, abertura nao autorizada ou comprometimento fisico.
-
-Este projeto implementa uma solucao embarcada em C++ orientada a objetos rodando em espaco de usuario no Linux da placa **STM32MP157D-DK1**, realizando a aquisicao e interpretacao de dados do sensor infravermelho reflexivo **HW-201** atraves do subsistema de arquivos do Kernel **IIO (Industrial I/O)**.
-
----
-
-## 🗺️ Arquitetura de Aquisicao Embarcada
+## Arquitetura do Sistema
 
 ```mermaid
-flowchart LR
-    subgraph HARDWARE["Kit Embarcado STM32MP157D-DK1"]
-        direction LR
-        HW201["Sensor HW-201<br/>(Emissao/Reflexao IR)"] -->|Tensao 0V ou 3.3V| ADC["Conversor A/D<br/>(Pino 5 - Header ADC)"]
-        ADC --> KERNEL["Kernel Linux<br/>Driver IIO"]
-        KERNEL --> SYSFS["/sys/bus/iio/devices/<br/>iio:device0/in_voltageX_raw"]
-        SYSFS -->|std::ifstream| SENSOR_CLASS["Classe C++<br/>IrObstacleSensor"]
+flowchart TD
+    subgraph SENSORIAMENTO["Camada Física"]
+        HW201["Sensor Óptico Reflexivo IR<br/>(Módulo HW-201 / LM393)"] -->|Tensão 0.0V a 3.3V| ADC_PIN["Header ADC (Pino 5 / CN16)<br/>STM32MP157D-DK1"]
+    end
+
+    subgraph LINUX_EMBARCADO["Linux Embarcado (OpenSTLinux)"]
+        ADC_PIN --> KERNEL["Driver IIO do Kernel Linux<br/>(stm32-adc)"]
+        KERNEL --> SYSFS["Virtual Filesystem Sysfs<br/>/sys/bus/iio/devices/iio:device0/in_voltageX_raw"]
+        SYSFS -->|std::ifstream| CPP_APP["Aplicação C++17<br/>(Classe IrObstacleSensor)"]
+        CPP_APP -->|Serialização| UDP_TX["Transmissor UDP<br/>(Classe UdpTransmitter)"]
+    end
+
+    subgraph ESTACAO_BASE["Computador / Estação de Monitoramento"]
+        UDP_TX -->|Datagramas UDP (Porta 5005)| PY_GUI["Interface Gráfica em Python<br/>(Visualização em Tempo Real + Log CSV)"]
     end
 ```
 
 ---
 
-## 📦 Diagrama de Classe UML (POO Estrita)
+## Módulos do Projeto
 
-```mermaid
-classDiagram
-    class IrObstacleSensor {
-        -std::string devicePath
-        -int rawThreshold
-        -int lastRawValue
-        -double referenceVoltage
-        -int maxAdcResolution
-        -bool autoDetectIioChannel()
-        +IrObstacleSensor(path, threshold, vref, maxAdc)
-        +virtual ~IrObstacleSensor()
-        +int readRaw()
-        +double getVoltage() const
-        +double readVoltage()
-        +bool isObstacleDetected() const
-        +bool isCompartmentViolated() const
-        +std::string getFormattedStatus() const
-        +int getLastRawValue() const
-        +int getThreshold() const
-        +void setThreshold(newThreshold)
-        +const std::string& getDevicePath() const
-        +void setDevicePath(newPath)
-        +void runMonitoringLoop(maxSamples, intervalMs)
-    }
 ```
-
----
-
-## 🔌 Entrega 0 — Conexao Fisica Segura (Hardware Desligado)
-
-### Regras Criticas de Seguranca
-1. **Alimentacao estritamente em 3,3 V:** O sensor HW-201 e alimentado exclusivamente em 3,3 V (Pino 4), protegendo o conversor A/D do processador STM32MP1.
-2. **Montagem Desenergizada:** Conexao realizada com a placa desconectada de fontes de alimentacao e cabos USB.
-
-### Esquema de Ligacao (Conectores Header da STM32MP157D-DK1)
-Com a placa posicionada com os conectores femea na borda inferior e o cartao microSD voltado para a esquerda (contagem **da direita para a esquerda**):
-
-| Pino no Sensor HW-201 | Conector na Placa STM32MP1 | Posicao Exata |
-| :--- | :--- | :--- |
-| **VCC** (Alimentacao) | **Bloco da Direita (8 furos)** | **Pino 4** (serigrafia `3V3`) |
-| **GND** (Terra) | **Bloco da Direita (8 furos)** | **Pino 7** (serigrafia `GND`) |
-| **OUT / D0** (Sinal) | **Bloco da Esquerda (6 furos)** | **Pino 5** (Entrada ADC) |
-
-### Evidencias Fotograficas
-* Conexao nos headers da placa desligada: [`docs/conexao_placa_desligada.jpg`](docs/conexao_placa_desligada.jpg)
-* Conexao nos pinos do sensor HW-201: [`docs/conexao_sensor_pinos.jpg`](docs/conexao_sensor_pinos.jpg)
-
----
-
-## 💻 Entrega 1 — Classe C++ (`IrObstacleSensor`) e Doxygen
-
-### Principio Fisico e Logica Active-Low (HW-201)
-O modulo de obstaculo infravermelho reflexivo HW-201 utiliza um par emissor/receptor IR acoplado ao comparador LM393:
-* **Compartimento Fechado (Carga Integra):** O feixe infravermelho reflete na face interna da tampa $\rightarrow$ Saida comuta para **Nivel Logico BAIXO (0 V / ADC proximo de 0)**.
-* **Compartimento Aberto (Violacao):** O feixe nao sofre reflexao $\rightarrow$ Saida comuta para **Nivel Logico ALTO (3,3 V / ADC proximo de 4095)**.
-
-### Principais Metodos da Classe `IrObstacleSensor`
-* `readRaw()`: Realiza a leitura atomica do canal IIO no `sysfs` (`/sys/bus/iio/devices/iio:device0/in_voltageX_raw`) utilizando `std::ifstream` (RAII) e fallback automatico de descoberta de canal (`autoDetectIioChannel()`).
-* `getVoltage()` / `readVoltage()`: Converte a leitura bruta na tensao fisica correspondente ($0,0\text{ V}$ a $3,3\text{ V}$).
-* `isObstacleDetected()`: Avalia se a leitura esta abaixo do limiar configurado (`lastRawValue < rawThreshold`).
-* `isCompartmentViolated()`: Indica violacao do compartimento monitorado (`!isObstacleDetected()`).
-* `runMonitoringLoop(maxSamples, intervalMs)`: Executa o ciclo encapsulado de aquisicao e exibicao formatada.
-
-### Geracao da Documentacao Doxygen
-```bash
-doxygen Doxyfile
-# Ou via Makefile:
-make doc
-```
-A documentacao HTML gerada encontra-se disponivel em [`docs/doxygen/html/index.html`](docs/doxygen/html/index.html).
-
----
-
-## ⚙️ Compilacao e Execucao
-
-### 1. Compilacao Cruzada para a Placa STM32MP1 (ARM Cortex-A7)
-```bash
-# Utilizando a toolchain oficial arm-buildroot-linux-gnueabihf:
-bash scripts/cross_build.sh
-# Ou via Makefile:
-make cross
-```
-
-### 2. Transferencia e Execucao no Kit STM32MP157D-DK1
-```bash
-# Transferir binario via SCP:
-scp app_sensor_arm root@192.168.42.2:/home/root/
-
-# Executar no terminal da placa:
-ssh root@192.168.42.2
-./app_sensor_arm /sys/bus/iio/devices/iio:device0/in_voltage0_raw
-```
-
-### 3. Compilacao e Teste Local (Simulacao no Computador)
-```bash
-make
-./app_sensor mock_sensor_raw.txt 10
-```
-
----
-
-## 📁 Estrutura de Arquivos do Repositorio
-
-```text
-projeto_final/
-├── entregas/                              # Pastas organizadas por entregavel (0 a 4)
-│   ├── entrega0_conexao_fisica/           # Fotos e mapeamento dos pinos 3,3V, GND e ADC
-│   ├── entrega1_classe_sensor_doxygen/    # Classe C++ IrObstacleSensor e Doxyfile
-│   ├── entrega2_execucao_embarcada/       # Makefile e scripts de cross-compilacao ARM
-│   ├── entrega3_telemetria_udp/           # Classe UdpTransmitter e especificacao UDP
-│   └── entrega4_interface_grafica/        # Dashboard grafico em Python e simulador
-├── docs/                                  # Evidencias e documentacao Doxygen
-│   ├── conexao_placa_desligada.jpg        # Conexao nos headers com kit desligado
-│   ├── conexao_sensor_pinos.jpg           # Conexao no sensor HW-201
-│   └── doxygen/html/                      # Documentacao HTML gerada pelo Doxygen
 ├── include/
-│   └── IrObstacleSensor.hpp               # Declaracao da classe C++ documentada
+│   ├── IrObstacleSensor.hpp        # Interface da classe do sensor com auto-detecção IIO
+│   └── UdpTransmitter.hpp          # Transmissor de sockets UDP de baixa latência
 ├── src/
-│   ├── IrObstacleSensor.cpp               # Implementacao dos metodos da classe
-│   └── main.cpp                           # Ponto de entrada enxuto da aplicacao
+│   ├── IrObstacleSensor.cpp        # Leitura dos arquivos virtuais sysfs e cálculo de tensão
+│   ├── UdpTransmitter.cpp          # Implementação de sockets BSD UDP não bloqueantes
+│   └── main.cpp                    # Loop principal de monitoramento e envio de telemetria
 ├── scripts/
-│   ├── cross_build.sh                     # Script de compilacao cruzada ARM
-│   ├── deploy_to_board.sh                 # Script de envio via SCP para a placa
-│   └── mock_sensor.py                     # Simulador de arquivo IIO para testes locais
-├── Doxyfile                               # Arquivo de configuracao do Doxygen
-├── Makefile                               # Automacao de build e documentacao
-└── README.md                              # Documentacao principal do repositorio
+│   ├── cross_build.sh              # Script de compilação cruzada para arquitetura ARM
+│   ├── deploy_to_board.sh          # Envio automático via SCP e execução remota por SSH
+│   └── mock_sensor.py              # Emulador de sensor para testes em bancada sem a placa
+├── gui/
+│   ├── gui_dashboard.py            # Dashboard gráfico com osciloscópio e alertas em tempo real
+│   └── test_udp_receiver.py        # Receptor de teste no terminal para validação de pacotes
+├── docs/
+│   ├── Doxyfile                    # Configuração para geração de documentação Doxygen
+│   └── hardware/                   # Diagramas de ligação, pinagem e fotos da montagem
+├── Makefile                        # Compilação nativa no PC e compilação cruzada para ARM
+└── LICENSE                         # Licença MIT
 ```
+
+---
+
+## Principais Destaques Técnicos
+
+1. **Driver IIO Orientado a Objetos (`IrObstacleSensor`):**
+   * **Auto-detecção de Canal do Kernel:** Faz a varredura dinâmica em `/sys/bus/iio/devices/iio:device0/` para encontrar o canal ADC correto em tempo de execução.
+   * **Histerese e Calibração:** Converte a leitura de 12 bits do ADC ($0$ a $4095$) para milivolts, aplicando histerese configurável para evitar leituras falsas causadas por ruído óptico.
+
+2. **Compilação Cruzada para ARM:**
+   * **SDK Utilizado:** `openstlinux-6.6-yocto-scarthgap-mpu` (`arm-openstlinux-linux-gnueabi-g++`).
+   * **Deploy com um Comando:** O script `deploy_to_board.sh` compila o binário, reduz os símbolos de depuração (*strip*), envia via rede para a placa e inicia o processo remotamente.
+
+3. **Telemetria UDP em Tempo Real:**
+   * Latência de envio inferior a $2\text{ ms}$ em rede local.
+   * Formato padronizado de pacote:
+     ```json
+     {"timestamp": 1729000000, "sensor_id": "HW201_CH1", "tensao": 2.75, "status": "ALERTA_VIOLACAO"}
+     ```
+
+4. **Interface Gráfica de Monitoramento (Python):**
+   * Gráfico de histórico deslizante de 60 segundos com taxa de atualização suave.
+   * Indicadores visuais imediatos de estado normal e violação de barreira.
+   * Registro em arquivo CSV com data e hora no padrão ISO 8601.
+
+---
+
+## Como Compilar e Executar
+
+### 1. Testar localmente no computador (Modo Simulação):
+```bash
+make clean && make
+./bin/monitor_app --mock
+```
+
+### 2. Compilar para a placa STM32MP1 (Compilação Cruzada):
+```bash
+# Carrega as variáveis do SDK da ST
+source /opt/st/stm32mp1/environment-setup-armv7ve-t2hf-neon-vfpv4-openstlinux-linux-gnueabi
+
+# Compila o binário ARM
+make CROSS_COMPILE=arm-openstlinux-linux-gnueabi-
+
+# Envia e roda na placa (informe o IP da placa e usuário)
+./scripts/deploy_to_board.sh 192.168.1.100 root
+```
+
+### 3. Abrir o Dashboard Gráfico no PC:
+```bash
+pip install -r requirements.txt
+python gui/gui_dashboard.py
+```
+
+---
+
+## Autores
+* **João Victor Tavares Pariz** ([@VPariz](https://github.com/VPariz)) — Engenharia Eletrônica, IME
+* **Mateus Roma** — Engenharia Eletrônica, IME
+* **Daniel Coimbra** — Engenharia Eletrônica, IME
+
+Desenvolvido no **Departamento de Engenharia Elétrica e Eletrônica**, **Instituto Militar de Engenharia (IME)**, Rio de Janeiro.
+
+---
+
+## Licença
+Este projeto está sob licença **MIT** — consulte o arquivo [LICENSE](LICENSE) para detalhes.
