@@ -1,0 +1,20 @@
+name: Embedded C++17 Application CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Native C++17 Compilation (Ubuntu GCC)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build User-Space Sensor Application
+        run: |
+          g++ -Wall -Wextra -std=c++17 -Iinclude src/IrObstacleSensor.cpp src/main.cpp -o app_sensor

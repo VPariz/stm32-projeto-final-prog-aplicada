@@ -1,5 +1,6 @@
 # IoT Telemetry & Physical Tamper Detection with STM32MP157D and Linux IIO
 
+[![C++17 CI](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/actions/workflows/ci.yml/badge.svg)](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/actions/workflows/ci.yml)
 [![Hardware](https://img.shields.io/badge/Board-STM32MP157D--DK1-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white)](https://www.st.com/en/evaluation-tools/stm32mp157d-dk1.html)
 [![Kernel](https://img.shields.io/badge/Kernel-Linux_IIO-E95420?style=flat-square&logo=linux&logoColor=white)](https://www.kernel.org/doc/html/latest/driver-api/iio/index.html)
 [![Language](https://img.shields.io/badge/C%2B%2B-17_OOP-00599C?style=flat-square&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
