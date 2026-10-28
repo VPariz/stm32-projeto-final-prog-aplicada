@@ -113,10 +113,8 @@ python gui/gui_dashboard.py
 
 ---
 
-## 👥 Authors
-* **João Victor Tavares Pariz** ([@VPariz](https://github.com/VPariz)) — Electronics Engineering, IME
-* **Mateus Roma** — Electronics Engineering, IME
-* **Daniel Coimbra** — Electronics Engineering, IME
+## 👤 Author
+* **João Victor Tavares Pariz** ([@VPariz](https://github.com/VPariz)) — Electronics Engineering, Military Institute of Engineering (IME).
 
 Developed at the **Department of Electrical & Electronics Engineering**, **Instituto Militar de Engenharia (IME)**, Rio de Janeiro, Brazil.
 

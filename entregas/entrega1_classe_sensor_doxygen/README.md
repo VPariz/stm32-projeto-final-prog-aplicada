@@ -1,6 +1,6 @@
 # Entrega 1 — Classe C++ de Leitura do Sensor Documentada com Doxygen
 
-**Grupo:** Joao Victor Pariz, Mateus Roma, Daniel Coimbra  
+**Autor:** Joao Victor Pariz  
 **Sensor (Nº 3):** Modulo Sensor de Obstaculo Infravermelho Reflexivo Digital (HW-201)
 
 ## Arquivos desta Entrega

@@ -1,6 +1,6 @@
 # Entrega 3 — Envio da Leitura via UDP e Documentacao do Protocolo
 
-**Grupo:** Joao Victor Pariz, Mateus Roma, Daniel Coimbra
+**Autor:** Joao Victor Pariz
 
 ## Arquivos desta Entrega
 * [`include/UdpTransmitter.hpp`](include/UdpTransmitter.hpp): Classe C++ encapsulada para envio de datagramas UDP.

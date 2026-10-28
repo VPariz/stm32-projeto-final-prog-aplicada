@@ -1,6 +1,6 @@
 # Entrega 0 — Conexao Fisica do Sensor com o Kit Desligado
 
-**Grupo:** Joao Victor Pariz, Mateus Roma, Daniel Coimbra  
+**Autor:** Joao Victor Pariz  
 **Sensor (Nº 3):** Modulo Sensor de Obstaculo Infravermelho Reflexivo Digital (HW-201)
 
 ## Mapeamento Pino a Pino (Alimentacao Estrita em 3,3 V)

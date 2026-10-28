@@ -1,6 +1,6 @@
 # Entrega 2 — Programa Funcional no Kit STM32MP157D-DK1
 
-**Grupo:** Joao Victor Pariz, Mateus Roma, Daniel Coimbra
+**Autor:** Joao Victor Pariz
 
 ## Arquivos desta Entrega
 * [`Makefile`](Makefile): Regras de compilacao nativa (`make`) e compilacao cruzada ARM (`make cross`).
