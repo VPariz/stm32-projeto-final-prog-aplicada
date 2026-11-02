@@ -45,10 +45,18 @@ echo "[INFO] Usando compilador: $(command -v $CROSS_CXX)"
 $CROSS_CXX --version | head -n 1
 
 echo "[BUILD] Compilando aplicacao para o target ARM..."
+if [ -f "src/main.cpp" ]; then
+    SRC_DIR="src"
+    INC_DIR="include"
+else
+    SRC_DIR="../../src"
+    INC_DIR="../../include"
+fi
+
 $CROSS_CXX -Wall -Wextra -std=c++17 -O2 \
-    -Iinclude \
-    src/IrObstacleSensor.cpp \
-    src/main.cpp \
+    -I"$INC_DIR" \
+    "$SRC_DIR/IrObstacleSensor.cpp" \
+    "$SRC_DIR/main.cpp" \
     -o app_sensor_arm
 
 echo "[SUCESSO] Binario ARM gerado: app_sensor_arm"

@@ -87,28 +87,55 @@ flowchart TD
 
 ## 🚀 Building & Running
 
-### 1. Local Desktop Simulation:
+### 1. Local Desktop Build & Simulation
 ```bash
+# Compile native binary (generates ./app_sensor):
 make clean && make
-./bin/monitor_app --mock
+
+# (Optional) Launch synthetic sensor emulator in background:
+python3 scripts/mock_sensor.py mock_sensor_raw.txt 2 &
+
+# Run monitoring application reading from simulated sensor:
+./app_sensor mock_sensor_raw.txt
 ```
 
-### 2. ARM Cross-Compilation for STM32MP1:
+### 2. ARM Cross-Compilation for STM32MP157D-DK1
 ```bash
-# Source OpenSTLinux Yocto SDK environment
-source /opt/st/stm32mp1/environment-setup-armv7ve-t2hf-neon-vfpv4-openstlinux-linux-gnueabi
+# Option A: Automated toolchain script (scans standard paths):
+bash scripts/cross_build.sh
 
-# Build ARM binary
-make CROSS_COMPILE=arm-openstlinux-linux-gnueabi-
-
-# Deploy and execute on target board
-./scripts/deploy_to_board.sh 192.168.1.100 root
+# Option B: Direct cross-compilation via Makefile:
+make cross CROSS_PREFIX=arm-buildroot-linux-gnueabihf-
+# (Or using standard arm-linux-gnueabihf- toolchain / OpenSTLinux Yocto SDK)
 ```
 
-### 3. Launch Desktop GUI Dashboard:
+### 3. Deploy to Target Board
 ```bash
+# Automated deploy script (pings board, transfers binary and sets executable permissions):
+./scripts/deploy_to_board.sh 192.168.42.2
+
+# Alternatively, manual transfer via SCP:
+scp app_sensor_arm root@192.168.42.2:/home/root/
+```
+
+### 4. Target Execution on STM32MP1 Kit (SSH / Serial Console)
+```bash
+# Access the target board:
+ssh root@192.168.42.2
+
+# Run sensor monitoring reading directly from the Linux IIO ADC channel:
+cd /home/root
+chmod +x app_sensor_arm
+./app_sensor_arm /sys/bus/iio/devices/iio:device0/in_voltage0_raw
+```
+
+### 5. Launch Desktop GUI Dashboard & Telemetry
+```bash
+# Install Python dependencies:
 pip install -r requirements.txt
-python gui/gui_dashboard.py
+
+# Run real-time monitoring visualizer:
+python3 gui/gui_dashboard.py
 ```
 
 ---

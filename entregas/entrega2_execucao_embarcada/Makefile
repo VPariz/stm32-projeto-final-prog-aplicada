@@ -3,13 +3,17 @@
 # SE/3 - Eletronica - Programacao Aplicada
 
 CXX ?= g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -O2
+CXXFLAGS = -Wall -Wextra -std=c++17 -I../../include -Iinclude -O2
 
 # Toolchain de Cross-Compilacao para o processador ARM Cortex-A7 da STM32MP1
 CROSS_PREFIX ?= arm-buildroot-linux-gnueabihf-
 CROSS_CXX = $(CROSS_PREFIX)g++
 
-SRCS = src/IrObstacleSensor.cpp src/main.cpp
+ifneq ("$(wildcard src/main.cpp)","")
+    SRCS = src/IrObstacleSensor.cpp src/main.cpp
+else
+    SRCS = ../../src/IrObstacleSensor.cpp ../../src/main.cpp
+endif
 TARGET_NATIVE = app_sensor
 TARGET_ARM = app_sensor_arm
 

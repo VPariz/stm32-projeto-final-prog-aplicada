@@ -1,0 +1,3 @@
+# Projeto Final - Telemetria IoT e Deteccao de Violacao Fisica
+# Requisitos para o Dashboard Grafico em Python
+matplotlib>=3.5.0
