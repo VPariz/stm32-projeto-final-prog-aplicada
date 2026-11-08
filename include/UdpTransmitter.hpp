@@ -106,6 +106,18 @@ public:
      * @param newPort Nova porta UDP.
      */
     void setServerPort(int newPort);
+
+    /**
+     * @brief Obtem o endereco IP do servidor configurado.
+     * @return String com o endereco IP.
+     */
+    const std::string& getServerIp() const;
+
+    /**
+     * @brief Obtem a porta UDP configurada.
+     * @return Porta UDP.
+     */
+    int getServerPort() const;
 };
 
 #endif // UDP_TRANSMITTER_HPP

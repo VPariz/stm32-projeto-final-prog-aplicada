@@ -120,3 +120,11 @@ void UdpTransmitter::setServerPort(int newPort) {
     cleanupSocket();
     initSocket();
 }
+
+const std::string& UdpTransmitter::getServerIp() const {
+    return serverIp;
+}
+
+int UdpTransmitter::getServerPort() const {
+    return serverPort;
+}
