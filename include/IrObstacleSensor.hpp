@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
+#include "UdpTransmitter.hpp"
 
 /**
  * @file IrObstacleSensor.hpp
@@ -133,6 +134,14 @@ public:
      * @param intervalMs Intervalo em milissegundos entre cada leitura (padrao: 250 ms).
      */
     void runMonitoringLoop(int maxSamples = 0, int intervalMs = 250);
+
+    /**
+     * @brief Executa o loop de leitura continua e envia cada leitura via UDP para o servidor.
+     * @param transmitter Instancia de UdpTransmitter configurada.
+     * @param maxSamples Numero de leituras a realizar (0 = loop infinito continuo).
+     * @param intervalMs Intervalo em milissegundos entre cada leitura (padrao: 250 ms).
+     */
+    void runTelemetryLoop(UdpTransmitter& transmitter, int maxSamples = 0, int intervalMs = 250);
 };
 
 #endif // IR_OBSTACLE_SENSOR_HPP

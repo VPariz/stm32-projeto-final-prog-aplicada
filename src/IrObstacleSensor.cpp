@@ -122,3 +122,26 @@ void IrObstacleSensor::runMonitoringLoop(int maxSamples, int intervalMs) {
         std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
     }
 }
+
+void IrObstacleSensor::runTelemetryLoop(UdpTransmitter& transmitter, int maxSamples, int intervalMs) {
+    int count = 0;
+    while (maxSamples == 0 || count < maxSamples) {
+        int raw = readRaw();
+        double volt = getVoltage();
+        bool violated = isCompartmentViolated();
+
+        auto now = std::chrono::system_clock::now();
+        long long tsMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch()
+        ).count();
+
+        bool sent = transmitter.sendTelemetryJson(raw, volt, violated, tsMs);
+
+        std::cout << "[" << std::setw(4) << std::setfill('0') << ++count << "] "
+                  << getFormattedStatus()
+                  << " | UDP(" << transmitter.getServerIp() << ":" << transmitter.getServerPort()
+                  << "): " << (sent ? "ENVIADO" : "FALHA") << "\n";
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+    }
+}
