@@ -13,6 +13,7 @@ var class_ir_obstacle_sensor =
     [ "readRaw", "class_ir_obstacle_sensor.html#af543473c547f5ae4b7def573440527aa", null ],
     [ "readVoltage", "class_ir_obstacle_sensor.html#a0317c28d3ca5c0eb54c5413645ce15e1", null ],
     [ "runMonitoringLoop", "class_ir_obstacle_sensor.html#aa34b1b88690a2df26656711b10065bf5", null ],
+    [ "runTelemetryLoop", "class_ir_obstacle_sensor.html#ae2ceef64823e0f52f209a113d240c564", null ],
     [ "setDevicePath", "class_ir_obstacle_sensor.html#aa3e69c7cbb246226bde3b4cf7764aa07", null ],
     [ "setThreshold", "class_ir_obstacle_sensor.html#aa4dfbf740d40793bca1b222679789767", null ],
     [ "devicePath", "class_ir_obstacle_sensor.html#a4ff3d04eea07f561e05315f5eeb142c5", null ],

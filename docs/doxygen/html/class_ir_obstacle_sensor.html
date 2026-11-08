@@ -154,6 +154,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa3e69c7cbb246226bde3b4cf7764aa07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Altera o caminho do arquivo de leitura em tempo de execucao.  <br /></td></tr>
 <tr class="memitem:aa34b1b88690a2df26656711b10065bf5" id="r_aa34b1b88690a2df26656711b10065bf5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aa34b1b88690a2df26656711b10065bf5">runMonitoringLoop</a> (int maxSamples=0, int intervalMs=250)</td></tr>
 <tr class="memdesc:aa34b1b88690a2df26656711b10065bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executa o loop de leitura continua do sensor exibindo os dados no terminal.  <br /></td></tr>
+<tr class="memitem:ae2ceef64823e0f52f209a113d240c564" id="r_ae2ceef64823e0f52f209a113d240c564"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ae2ceef64823e0f52f209a113d240c564">runTelemetryLoop</a> (<a class="el" href="class_udp_transmitter.html">UdpTransmitter</a> &amp;transmitter, int maxSamples=0, int intervalMs=250)</td></tr>
+<tr class="memdesc:ae2ceef64823e0f52f209a113d240c564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executa o loop de leitura continua e envia cada leitura via UDP para o servidor.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -485,6 +487,42 @@ Private Attributes</h2></td></tr>
 <p>Executa o loop de leitura continua do sensor exibindo os dados no terminal. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">maxSamples</td><td>Numero de leituras a realizar (0 = loop infinito continuo). </td></tr>
+    <tr><td class="paramname">intervalMs</td><td>Intervalo em milissegundos entre cada leitura (padrao: 250 ms). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae2ceef64823e0f52f209a113d240c564" name="ae2ceef64823e0f52f209a113d240c564"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2ceef64823e0f52f209a113d240c564">&#9670;&#160;</a></span>runTelemetryLoop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void IrObstacleSensor::runTelemetryLoop </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_udp_transmitter.html">UdpTransmitter</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>transmitter</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxSamples</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>intervalMs</em></span><span class="paramdefsep"> = </span><span class="paramdefval">250</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Executa o loop de leitura continua e envia cada leitura via UDP para o servidor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transmitter</td><td>Instancia de <a class="el" href="class_udp_transmitter.html" title="Gerencia a conexao sem conexao (UDP) e envio de telemetria da carga monitorada.">UdpTransmitter</a> configurada. </td></tr>
     <tr><td class="paramname">maxSamples</td><td>Numero de leituras a realizar (0 = loop infinito continuo). </td></tr>
     <tr><td class="paramname">intervalMs</td><td>Intervalo em milissegundos entre cada leitura (padrao: 250 ms). </td></tr>
   </table>

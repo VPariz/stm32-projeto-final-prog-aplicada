@@ -1,8 +1,10 @@
 var searchData=
 [
-  ['irobstaclesensor_0',['IrObstacleSensor',['../class_ir_obstacle_sensor.html',1,'IrObstacleSensor'],['../class_ir_obstacle_sensor.html#af18a5d2b5066a34315309c894b9c71cb',1,'IrObstacleSensor::IrObstacleSensor()']]],
-  ['irobstaclesensor_2ecpp_1',['IrObstacleSensor.cpp',['../_ir_obstacle_sensor_8cpp.html',1,'']]],
-  ['irobstaclesensor_2ehpp_2',['IrObstacleSensor.hpp',['../_ir_obstacle_sensor_8hpp.html',1,'']]],
-  ['iscompartmentviolated_3',['isCompartmentViolated',['../class_ir_obstacle_sensor.html#a0024e56f16fb046b6c8c00079f984f62',1,'IrObstacleSensor']]],
-  ['isobstacledetected_4',['isObstacleDetected',['../class_ir_obstacle_sensor.html#ad55aedbb3d65f313feb2ec650f750ee0',1,'IrObstacleSensor']]]
+  ['getdevicepath_0',['getDevicePath',['../class_ir_obstacle_sensor.html#a6beaf91fc19286baa4d17b9c79466518',1,'IrObstacleSensor']]],
+  ['getformattedstatus_1',['getFormattedStatus',['../class_ir_obstacle_sensor.html#a417cb532f44ff4a1c92ab30d4c90999a',1,'IrObstacleSensor']]],
+  ['getlastrawvalue_2',['getLastRawValue',['../class_ir_obstacle_sensor.html#aef3ee6ab192583a9aa58ccfe18994a5e',1,'IrObstacleSensor']]],
+  ['getserverip_3',['getServerIp',['../class_udp_transmitter.html#a1db901596d3f5c72e208aa7c97b9e567',1,'UdpTransmitter']]],
+  ['getserverport_4',['getServerPort',['../class_udp_transmitter.html#aa77e88bf7bd4f59e3ea3bf7bdea34da6',1,'UdpTransmitter']]],
+  ['getthreshold_5',['getThreshold',['../class_ir_obstacle_sensor.html#a4566f0663c551b1ef7c0ef53bb6a1439',1,'IrObstacleSensor']]],
+  ['getvoltage_6',['getVoltage',['../class_ir_obstacle_sensor.html#a2ccc92da023dcbf1c22d9e15f86eb1f7',1,'IrObstacleSensor']]]
 ];

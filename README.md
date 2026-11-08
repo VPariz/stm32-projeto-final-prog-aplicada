@@ -85,6 +85,7 @@ classDiagram
         +const std::string& getDevicePath() const
         +void setDevicePath(const std::string& newPath)
         +void runMonitoringLoop(int maxSamples, int intervalMs)
+        +void runTelemetryLoop(UdpTransmitter& transmitter, int maxSamples, int intervalMs)
     }
 
     class UdpTransmitter {
@@ -96,7 +97,10 @@ classDiagram
         +~UdpTransmitter()
         +bool sendReading(int rawValue, double voltage, bool violated)
         +std::string buildJsonPayload(int rawValue, double voltage, bool violated) const
+        +const std::string& getServerIp() const
+        +uint16_t getServerPort() const
     }
+    IrObstacleSensor ..> UdpTransmitter : envia leitura via UDP
 ```
 
 ### Explicação das Classes e Métodos Principais
@@ -108,7 +112,10 @@ classDiagram
   * `isCompartmentViolated()`: Retorna `true` quando a tampa do compartimento é aberta/violada (ausência de reflexão IR $\rightarrow$ saída vai para nível lógico alto $\approx 3{,}3\text{ V}$).
   * `getFormattedStatus()`: Monta a string completa de diagnóstico contendo leitura bruta, tensão em Volts, estado do obstáculo e condição de segurança da carga.
   * `runMonitoringLoop(maxSamples, intervalMs)`: Executa o laço contínuo de aquisição em tempo real e impressão formatada no terminal.
-* **Ponto de Entrada ([`src/main.cpp`](src/main.cpp)):** Instancia o objeto `IrObstacleSensor` dentro de bloco `try/catch` e delega integralmente a execução ao método `sensor.runMonitoringLoop()`.
+  * `runTelemetryLoop(transmitter, maxSamples, intervalMs)`: Executa a leitura periódica do sensor e envia cada amostra em tempo real via socket UDP ao servidor remoto.
+* **Classe `UdpTransmitter`** ([`include/UdpTransmitter.hpp`](include/UdpTransmitter.hpp) e [`src/UdpTransmitter.cpp`](src/UdpTransmitter.cpp)):
+  * Encapsula a criação e o fechamento (RAII) do socket UDP (`AF_INET`, `SOCK_DGRAM`), serializa os dados em JSON (`buildJsonPayload`) ou CSV (`buildCsvPayload`) e transmite cada leitura via `sendReading()`.
+* **Ponto de Entrada ([`src/main.cpp`](src/main.cpp)):** Instancia os objetos `IrObstacleSensor` e `UdpTransmitter` dentro de bloco `try/catch` e delega a execução ao método `sensor.runTelemetryLoop()`.
 
 ---
 
@@ -124,7 +131,7 @@ classDiagram
 
 ---
 
-## 🚀 5. Instruções de Compilação e Execução (Entrega 2)
+## 🚀 5. Instruções de Compilação e Execução (Entregas 2 e 3)
 
 ### Etapa A — Configuração da Toolchain de Compilação Cruzada (VM Linux)
 Extraia a toolchain oficial fornecida (`arm-buildroot-linux-gnueabihf_sdk-DK2.tar.gz`) na máquina virtual Linux e adicione o diretório `bin` ao `PATH`:
@@ -146,7 +153,7 @@ make cross
 
 # Opção 3 — Comando direto com o compilador cruzado da toolchain:
 arm-buildroot-linux-gnueabihf-g++ -Wall -Wextra -std=c++17 -O2 \
-    -Iinclude src/IrObstacleSensor.cpp src/main.cpp -o app_sensor_arm
+    -Iinclude src/IrObstacleSensor.cpp src/UdpTransmitter.cpp src/main.cpp -o app_sensor_arm
 ```
 > O binário gerado (`app_sensor_arm`) é um executável ELF 32-bit LSB para `ARM, EABI5 version 1 (SYSV)`, pronto para execução no espaço de usuário Linux da placa STM32MP157D-DK1.
 
@@ -186,6 +193,13 @@ arm-buildroot-linux-gnueabihf-g++ -Wall -Wextra -std=c++17 -O2 \
 
    # Ou especificando uma quantidade fixa de leituras (ex.: 10 amostras):
    ./app_sensor_arm /sys/bus/iio/devices/iio:device0/in_voltage0_raw 10
+
+   # Execução transmitindo a leitura via UDP para o servidor (IP do PC na rede USB/Ethernet, porta 5000):
+   ./app_sensor_arm /sys/bus/iio/devices/iio:device0/in_voltage0_raw 0 192.168.42.10 5000
+   ```
+   No computador servidor (`192.168.42.10`), inicie o receptor UDP para visualizar os pacotes recebidos em tempo real:
+   ```bash
+   python3 gui/test_udp_receiver.py
    ```
    *(Observação: Caso o caminho do canal não seja informado como argumento, a classe `IrObstacleSensor` utiliza `/sys/bus/iio/devices/iio:device0/in_voltage0_raw` por padrão e realiza autodetecção automática entre os canais `in_voltageX_raw` disponíveis).*
 
@@ -198,8 +212,8 @@ make clean && make
 # 2. Executar o simulador de sensor em segundo plano (alterna tampa fechada/aberta):
 python3 scripts/mock_sensor.py mock_sensor_raw.txt 2 &
 
-# 3. Executar a aplicação lendo os dados simulados:
-./app_sensor mock_sensor_raw.txt 10
+# 3. Executar a aplicação lendo os dados simulados e enviando via UDP local (127.0.0.1:5000):
+./app_sensor mock_sensor_raw.txt 10 127.0.0.1 5000
 ```
 
 ---
@@ -220,6 +234,25 @@ Durante a execução do binário `app_sensor_arm`, a classe realiza a leitura do
 | :--- | :---: | :---: | :---: | :--- |
 | **Tampa Fechada (Normal)** | Presente (feixe refletido) | $< 2000$ (tip. $100 \text{ a } 900$) | $\approx 0{,}08\text{ V a } 0{,}75\text{ V}$ | `Obstaculo: PRESENTE \| Carga: INTEGRA (SEGURA)` |
 | **Tampa Aberta (Violação)** | Ausente (feixe livre) | $\ge 2000$ (tip. $3500 \text{ a } 4095$) | $\approx 2{,}80\text{ V a } 3{,}30\text{ V}$ | `Obstaculo: AUSENTE \| Carga: VIOLACAO DETECTADA!` |
+
+### Especificação do Protocolo de Telemetria UDP (Entrega 3)
+
+A cada ciclo de leitura, o método `IrObstacleSensor::runTelemetryLoop()` invoca `UdpTransmitter::sendReading()`, que transmite um datagrama **UDP/IPv4** (`SOCK_DGRAM`, sem bloqueio de conexão, porta padrão `5000`) contendo um payload **JSON em UTF-8**:
+
+```json
+{"sensor_id":"G3_IR_HW201","raw":850,"voltage":0.68,"unit":"V","violated":0,"timestamp":1762640400125}
+```
+
+| Campo | Tipo | Exemplo | Descrição |
+| :--- | :---: | :---: | :--- |
+| `sensor_id` | `string` | `"G3_IR_HW201"` | Identificador único do nó sensor embarcado. |
+| `raw` | `int` | `850` | Valor digital bruto lido do arquivo `/sys/bus/iio/devices/iio:device0/in_voltageX_raw`. |
+| `voltage` | `double` | `0.68` | Tensão elétrica calculada em Volts ($0{,}00\text{ V}$ a $3{,}30\text{ V}$). |
+| `unit` | `string` | `"V"` | Unidade física da grandeza medida (Volts). |
+| `violated` | `int` | `0` ou `1` | Estado de violação da carga (`0` = compartimento íntegro, `1` = violação detectada). |
+| `timestamp` | `int64` | `1762640400125` | Instante da aquisição em milissegundos desde a época UNIX (`std::chrono::system_clock`). |
+
+Também é disponibilizado o método auxiliar `UdpTransmitter::buildCsvPayload()` no formato compacto `<sensor_id>,<raw>,<voltage>,<violated>,<timestamp>` para integração com coletores seriais/UDP simplificados.
 
 ---
 
