@@ -9,7 +9,7 @@
 **Instituto Militar de Engenharia — IME**  
 **Seção de Engenharia Elétrica — SE/3**  
 **Disciplina:** Programação Aplicada à Engenharia Elétrica (SE/3 - Eletrônica)  
-**Autor:** João Victor Tavares Pariz ([@VPariz](https://github.com/VPariz))  
+**Autores:** João Victor Tavares Pariz ([@VPariz](https://github.com/VPariz)) *(Grupo 3: João Victor Tavares Pariz, Mateus Gustavo Sales da Silva Roma e Daniel de Oliveira Coimbra)*  
 **Hardware Alvo:** Kit de Desenvolvimento STMicroelectronics **STM32MP157D-DK1** (Linux Embarcado)  
 **Sensor Utilizado:** Módulo Sensor de Obstáculo Infravermelho Reflexivo (**HW-201 / LM393**)  
 
@@ -17,13 +17,15 @@
 
 ## 📂 Índice de Entregas (Acesso Rápido)
 
-| Etapa | Pasta Dedicada | Descrição e Evidências | Status |
-| :--- | :--- | :--- | :---: |
-| **Entrega 0** | [`entregas/entrega0_conexao_fisica/`](entregas/entrega0_conexao_fisica/) | Fotos da conexão física segura nos headers (`3V3`, `GND` e `ADC`) com o kit desligado. | ✅ Concluída |
-| **Entrega 1** | [`entregas/entrega1_classe_sensor_doxygen/`](entregas/entrega1_classe_sensor_doxygen/) | Classe C++ `IrObstacleSensor` encapsulada (zero variáveis globais) + Documentação Doxygen. | ✅ Concluída |
-| **Entrega 2** | **[`entregas/entrega2_execucao_embarcada/`](entregas/entrega2_execucao_embarcada/)** | **Programa funcional no kit STM32MP1 com leitura IIO do sensor + Instruções de compilação e execução.** | ✅ **Concluída** |
-| **Entrega 3** | [`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/) | Envio contínuo em tempo real via socket UDP e especificação do protocolo. | ✅ Pronta |
-| **Entrega 4** | [`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/) | Interface gráfica em Python (tempo real, histórico de 60s, alerta visual e log CSV). | ✅ Pronta |
+| Etapa | Prazo | Pasta Dedicada | Descrição e Evidências | Commit de Entrega | Status |
+| :--- | :---: | :--- | :--- | :---: | :---: |
+| **Entrega 0** | `19/10/2026` | [`entregas/entrega0_conexao_fisica/`](entregas/entrega0_conexao_fisica/) | Fotos da conexão física segura nos headers (`3V3`, `GND` e `ADC`) com o kit desligado. | [`ed3eb08`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/ed3eb08401aefd033d5f62e19240ddd75e9064d9) | ✅ Concluída |
+| **Entrega 1** | `26/10/2026` | [`entregas/entrega1_classe_sensor_doxygen/`](entregas/entrega1_classe_sensor_doxygen/) | Classe C++ `IrObstacleSensor` encapsulada (zero variáveis globais) + Documentação Doxygen. | [`933267a`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/933267a0257bff3a903660e592808ec3947b327d) | ✅ Concluída |
+| **Entrega 2** | `02/11/2026` | [`entregas/entrega2_execucao_embarcada/`](entregas/entrega2_execucao_embarcada/) | Programa funcional no kit STM32MP1 com leitura IIO do sensor + Instruções de compilação e execução. | [`d4b8184`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/d4b8184e18f8a9e8740954f3aa2461eea57d789d) | ✅ Concluída |
+| **Entrega 3** | `09/11/2026` | **[`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/)** | **Envio da leitura do sensor via UDP para o servidor, documentação do protocolo e instruções atualizadas.** | **[`779a547`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506)** | ✅ **Concluída** |
+| **Entrega 4** | `16/11/2026` | [`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/) | Interface gráfica em Python (tempo real, histórico de 60s, alerta visual e log CSV). | *Prevista* | ⏳ Em preparação |
+
+> **Histórico de Commits da Entrega 3:** [`8fb8f14`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/8fb8f14ee3acf0c8f7d8e74239d2dfbb56da3efe) (*classe UdpTransmitter*) → [`e11bb71`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/e11bb716ee5d292a82047f8c8cfc60ce251f8833) (*integração UDP no sensor e main*) → [`7dad673`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/7dad67312bba08f48b49446a084e44d7a196f572) (*build ARM e CI*) → [`779a547`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506) (*documentação do protocolo UDP e instruções*).
 
 ---
 
