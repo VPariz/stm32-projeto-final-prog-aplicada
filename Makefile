@@ -5,11 +5,17 @@
 CXX ?= g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -O2
 
+ifeq ($(OS),Windows_NT)
+    LDFLAGS = -lws2_32
+else
+    LDFLAGS =
+endif
+
 # Toolchain de Cross-Compilacao para o processador ARM Cortex-A7 da STM32MP1
 CROSS_PREFIX ?= arm-buildroot-linux-gnueabihf-
 CROSS_CXX = $(CROSS_PREFIX)g++
 
-SRCS = src/IrObstacleSensor.cpp src/main.cpp
+SRCS = src/IrObstacleSensor.cpp src/UdpTransmitter.cpp src/main.cpp
 TARGET_NATIVE = app_sensor
 TARGET_ARM = app_sensor_arm
 
@@ -18,7 +24,7 @@ TARGET_ARM = app_sensor_arm
 all: $(TARGET_NATIVE)
 
 $(TARGET_NATIVE): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 	@echo [OK] Binario nativo para PC gerado com sucesso: $(TARGET_NATIVE)
 
 cross: $(SRCS)

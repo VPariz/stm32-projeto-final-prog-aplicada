@@ -19,9 +19,9 @@ jobs:
         run: |
           make clean && make
           echo "850" > mock_iio_raw.txt
-          ./app_sensor mock_iio_raw.txt 2
+          ./app_sensor mock_iio_raw.txt 2 127.0.0.1 5000
           echo "3600" > mock_iio_raw.txt
-          ./app_sensor mock_iio_raw.txt 2
+          ./app_sensor mock_iio_raw.txt 2 127.0.0.1 5000
           rm -f mock_iio_raw.txt
 
       - name: Install ARM Cross-Compiler & Build ARM Target (STM32MP157D-DK1)
