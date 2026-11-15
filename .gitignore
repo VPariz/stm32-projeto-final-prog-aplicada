@@ -33,6 +33,8 @@ mock_sensor_raw.txt
 # Materiais de estudo locais, apostilas LaTeX e imagens brutas de rascunho
 *.tex
 *.pdf
+!apresentacao/*.tex
+!apresentacao/*.pdf
 latex_assets/
 Screenshot*.png
 WhatsApp*.jpeg

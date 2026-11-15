@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apresentação — Monitoramento Inteligente de Carga (STM32MP157D-DK1)</title>
+  <style>
+    :root {
+      --ime-blue: #002b5c;
+      --ime-blue-light: #0a458a;
+      --ime-gold: #c59b27;
+      --bg-light: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-main: #1a2230;
+      --text-muted: #546278;
+      --ok-green: #1b7e32;
+      --alert-red: #c61a1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0d1522;
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+    .deck { flex: 1; position: relative; width: 100%; height: 100%; }
+    .slide {
+      position: absolute; inset: 0; background: var(--bg-light);
+      display: none; flex-direction: column; justify-content: space-between;
+    }
+    .slide.active { display: flex; }
+    .slide-header {
+      background: linear-gradient(90deg, var(--ime-blue), var(--ime-blue-light));
+      color: #fff; padding: 16px 42px; border-bottom: 4px solid var(--ime-gold);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .slide-header h2 { font-size: 1.48rem; font-weight: 700; }
+    .slide-header .badge-commit {
+      background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35);
+      padding: 6px 14px; border-radius: 6px; font-family: Consolas, monospace;
+      font-size: 0.92rem; color: #fff; text-decoration: none;
+    }
+    .slide-header .badge-commit:hover { background: var(--ime-gold); color: #000; }
+    .slide-body {
+      flex: 1; padding: 24px 42px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; flex: 1; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; align-items: stretch; flex: 1; }
+    .card {
+      background: var(--card-bg); border-radius: 10px; padding: 18px 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06); border-top: 4px solid var(--ime-blue);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .card.gold { border-top-color: var(--ime-gold); }
+    .card.green { border-top-color: var(--ok-green); }
+    .card.red { border-top-color: var(--alert-red); }
+    .card h3 { color: var(--ime-blue); font-size: 1.15rem; margin-bottom: 2px; }
+    ul, ol { padding-left: 20px; line-height: 1.55; font-size: 0.98rem; }
+    li { margin-bottom: 5px; }
+    code {
+      background: #e8eef5; padding: 2px 6px; border-radius: 4px;
+      font-family: Consolas, monospace; font-size: 0.9em; color: #0b3568;
+    }
+    pre {
+      background: #141e2e; color: #e6edf3; padding: 12px 16px; border-radius: 8px;
+      font-family: Consolas, monospace; font-size: 0.86rem; line-height: 1.42; overflow-x: auto;
+    }
+    table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 8px; overflow: hidden; font-size: 0.93rem;
+    }
+    th { background: var(--ime-blue); color: #fff; text-align: left; padding: 9px 12px; }
+    td { padding: 9px 12px; border-bottom: 1px solid #e1e6ef; }
+    tr:last-child td { border-bottom: none; }
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; }
+    .photo-box {
+      background: #fff; border-radius: 8px; padding: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .photo-box img { max-width: 100%; max-height: 360px; border-radius: 6px; object-fit: contain; }
+    .photo-box span { margin-top: 8px; font-size: 0.86rem; color: var(--text-muted); font-weight: 600; text-align: center; }
+    .cover-slide {
+      background: radial-gradient(circle at top right, #0e3d7a, #001c3d);
+      color: #fff; justify-content: center; align-items: center; text-align: center; padding: 48px;
+    }
+    .cover-box {
+      max-width: 980px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.18); border-top: 5px solid var(--ime-gold);
+      border-radius: 14px; padding: 42px 54px; backdrop-filter: blur(8px);
+    }
+    .cover-inst { letter-spacing: 1.5px; text-transform: uppercase; color: #ffd970; font-weight: 700; font-size: 1rem; margin-bottom: 14px; }
+    .cover-title { font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+    .cover-sub { font-size: 1.18rem; color: #cfe0f5; margin-bottom: 26px; }
+    .cover-meta {
+      display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+      font-size: 0.98rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;
+    }
+    .slide-footer {
+      background: var(--ime-blue); color: #cbd8ea; padding: 10px 42px; font-size: 0.88rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-btns { display: flex; gap: 10px; align-items: center; }
+    .nav-btns button {
+      background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 14px; border-radius: 5px; cursor: pointer; font-weight: 600;
+    }
+    .nav-btns button:hover { background: var(--ime-gold); color: #000; }
+    .video-container {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #0c131f; border-radius: 10px; padding: 16px; color: #fff; gap: 12px;
+    }
+    video { width: 100%; max-height: 330px; border-radius: 8px; background: #000; }
+    .btn-file {
+      background: var(--ime-gold); color: #000; font-weight: 700; padding: 8px 16px;
+      border-radius: 6px; cursor: pointer; border: none; font-size: 0.92rem;
+    }
+    .flow-wrap {
+      display: flex; flex-direction: column; gap: 22px; align-items: center; justify-content: center; flex: 1;
+    }
+    .flow-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .flow-node {
+      background: #fff; border: 2px solid var(--ime-blue); border-radius: 10px;
+      padding: 14px 16px; width: 220px; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    }
+    .flow-node.hw { border-color: var(--alert-red); background: #fff5f5; }
+    .flow-node.pc { border-color: var(--ok-green); background: #f3fbf5; }
+    .flow-node strong { display: block; color: var(--ime-blue); margin-bottom: 4px; font-size: 0.98rem; }
+    .flow-node.hw strong { color: var(--alert-red); }
+    .flow-node.pc strong { color: var(--ok-green); }
+    .flow-node span { font-size: 0.85rem; color: var(--text-muted); }
+    .flow-arrow { font-size: 1.5rem; font-weight: 800; color: var(--ime-blue); }
+  </style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- SLIDE 1: CAPA -->
+  <section class="slide cover-slide active">
+    <div class="cover-box">
+      <div class="cover-inst">Instituto Militar de Engenharia — IME &bull; Seção de Engenharia Elétrica — SE/3</div>
+      <h1 class="cover-title">Monitoramento Inteligente de Carga Sensível<br/>STM32MP157D-DK1 &amp; Linux Industrial I/O</h1>
+      <div class="cover-sub">Programação Aplicada à Engenharia Elétrica — Apresentação do Projeto Final</div>
+      <div class="cover-meta">
+        <div><strong>Grupo 3:</strong> João Victor Tavares Pariz, Mateus Roma e Daniel Coimbra</div>
+        <div><strong>Kit:</strong> STM32MP157D-DK1 (Cortex-A7)</div>
+        <div><strong>Sensor:</strong> Infravermelho Reflexivo HW-201</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: INDICE DE COMMITS E ARQUITETURA -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>1. Visão Geral e Linha do Tempo de Commits</h2>
+      <a class="badge-commit" href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada" target="_blank">Repositório GitHub &#8599;</a>
+    </div>
+    <div class="slide-body">
+      <div class="card gold">
+        <h3>Contexto e Solução Técnica</h3>
+        <p>Monitoramento contínuo contra abertura não autorizada de compartimento de carga utilizando <strong>C++17 estritamente Orientado a Objetos</strong> (zero variáveis globais) sobre o subsistema <strong>Linux Industrial I/O (IIO)</strong> na placa STM32MP157D-DK1, com telemetria UDP em tempo real e interface gráfica supervisória em Python.</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Etapa</th>
+            <th>Prazo</th>
+            <th>Escopo Implementado no Repositório</th>
+            <th>Commit de Entrega</th>
+            <th>Tempo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Entrega 0</strong></td>
+            <td><code>19/10/2026</code></td>
+            <td>Conexão física segura nos headers (<code>3V3</code>, <code>GND</code> e <code>ADC</code>) com o kit desligado.</td>
+            <td><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/ed3eb08401aefd033d5f62e19240ddd75e9064d9" target="_blank"><code>ed3eb08</code></a></td>
+            <td>~1 min</td>
+          </tr>
+          <tr>
+            <td><strong>Entrega 1</strong></td>
+            <td><code>26/10/2026</code></td>
+            <td>Classe C++ <code>IrObstacleSensor</code> encapsulada + Documentação Doxygen.</td>
+            <td><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/933267a0257bff3a903660e592808ec3947b327d" target="_blank"><code>933267a</code></a></td>
+            <td>~1,5 min</td>
+          </tr>
+          <tr>
+            <td><strong>Entrega 2</strong></td>
+            <td><code>02/11/2026</code></td>
+            <td>Cross-compilação ARM, leitura IIO real no kit STM32MP1 e instruções de deploy.</td>
+            <td><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/d4b8184e18f8a9e8740954f3aa2461eea57d789d" target="_blank"><code>d4b8184</code></a></td>
+            <td>~1,5 min</td>
+          </tr>
+          <tr>
+            <td><strong>Entrega 3</strong></td>
+            <td><code>09/11/2026</code></td>
+            <td>Classe <code>UdpTransmitter</code>, envio UDP em tempo real e documentação do protocolo JSON.</td>
+            <td><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506" target="_blank"><code>8fb8f14 &rarr; 779a547</code></a></td>
+            <td>~1,5 min</td>
+          </tr>
+          <tr>
+            <td><strong>Entrega 4</strong></td>
+            <td><code>16/11/2026</code></td>
+            <td>Interface Gráfica Python (histórico 60s, alerta visual, limiar e CSV) + Apresentação.</td>
+            <td><strong>Entrega Final + Demo ao Vivo</strong></td>
+            <td>~2,5 min</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">
+      <span>Grupo 3: Pariz, Mateus Roma e Daniel Coimbra — SE/3 IME</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">2 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: FLUXOGRAMA DO SISTEMA -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>2. Fluxograma Completo do Sistema</h2>
+      <span class="badge-commit">Fluxo Hardware &rarr; Kernel Linux &rarr; C++ &rarr; UDP &rarr; GUI</span>
+    </div>
+    <div class="slide-body">
+      <div class="flow-wrap">
+        <div class="flow-row">
+          <div class="flow-node hw">
+            <strong>1. Sensor HW-201 (LM393)</strong>
+            <span>Emissão e reflexão IR.<br/>Saída analógica <code>0,0V–3,3V</code></span>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node hw">
+            <strong>2. STM32MP157D-DK1</strong>
+            <span>Header Analog (Pino 5)<br/>Conversor ADC 12 bits</span>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node">
+            <strong>3. Subsistema Linux IIO</strong>
+            <span>Driver <code>stm32-adc</code> expõe<br/><code>in_voltageX_raw</code> em sysfs</span>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node">
+            <strong>4. Aplicação C++17 POO</strong>
+            <span><code>IrObstacleSensor</code> lê ADC,<br/>converte em Volts e diagnostica</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-node pc">
+            <strong>8. Registro &amp; Exportação CSV</strong>
+            <span>Gravação contínua com timestamp<br/>ISO e flag de violação</span>
+          </div>
+          <div class="flow-arrow">&larr;</div>
+          <div class="flow-node pc">
+            <strong>7. Gráfico 60s &amp; Alarme Visual</strong>
+            <span>Banner Verde / Vermelho +<br/>ajuste dinâmico de limiar</span>
+          </div>
+          <div class="flow-arrow">&larr;</div>
+          <div class="flow-node pc">
+            <strong>6. Dashboard Python (PC)</strong>
+            <span><code>TelemetryDashboard</code> escuta<br/>porta UDP 5000 em thread</span>
+          </div>
+          <div class="flow-arrow">&larr;</div>
+          <div class="flow-node">
+            <strong>5. Socket UDP/IPv4 (4 Hz)</strong>
+            <span><code>UdpTransmitter</code> envia<br/>datagrama JSON pela Ethernet</span>
+          </div>
+        </div>
+      </div>
+      <div class="card gold">
+        <h3>Critério de Decisão em Tempo Real</h3>
+        <p>A cada <code>250 ms</code>: leitura bruta <code>raw</code> &rarr; conversão <code>V = (raw / 4095) * 3,3 V</code> &rarr; comparação com o limiar (<code>2000</code> / <code>1,61 V</code>) &rarr; transmissão UDP imediata &rarr; atualização gráfica e log.</p>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Fluxograma Operacional — Camada Física ao Supervisório</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">3 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: ENTREGA 0 -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>3. Entrega 0 — Descrição do Sensor HW-201 e Conexão Física</h2>
+      <a class="badge-commit" href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/ed3eb08401aefd033d5f62e19240ddd75e9064d9" target="_blank">Commit ed3eb08 &#8599;</a>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card red">
+          <h3>Funcionamento do Sensor e Segurança Elétrica</h3>
+          <ul>
+            <li><strong>Sensor HW-201 (LM393):</strong> emissor e receptor infravermelho com lógica <em>active-low</em>.</li>
+            <li><strong>Tampa Fechada:</strong> feixe IR reflete na superfície interna &rarr; saída baixa (<code>~0,68 V</code>).</li>
+            <li><strong>Tampa Aberta:</strong> sem reflexão &rarr; saída vai para nível alto (<code>~2,90 V</code>).</li>
+            <li>Montagem executada com o kit <strong>totalmente desligado</strong> e alimentação estrita em <strong>3,3 V</strong>.</li>
+          </ul>
+          <table>
+            <thead>
+              <tr><th>Pino HW-201</th><th>Conector na Placa</th><th>Posição Exata (dir. &rarr; esq.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>VCC</strong></td><td>Bloco Direita (8 furos — Power)</td><td><strong>Pino 4</strong> (<code>3V3</code>)</td></tr>
+              <tr><td><strong>GND</strong></td><td>Bloco Direita (8 furos — Power)</td><td><strong>Pino 7</strong> (<code>GND</code>)</td></tr>
+              <tr><td><strong>OUT</strong></td><td>Bloco Esquerda (6 furos — Analog)</td><td><strong>Pino 5</strong> (Entrada <code>ADC</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="photo-grid">
+          <div class="photo-box">
+            <img src="../docs/conexao_placa_desligada.jpg" alt="Conexão na placa desligada" />
+            <span>Kit STM32MP157D-DK1 desligado (Pinos 3V3, GND e ADC)</span>
+          </div>
+          <div class="photo-box">
+            <img src="../docs/conexao_sensor_pinos.jpg" alt="Conexão no sensor HW-201" />
+            <span>Conexão nos pinos VCC, GND e OUT do sensor HW-201</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Entrega 0 — Descrição do Sensor e Pinagem Segura</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">4 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: DIAGRAMA DE CLASSES UML E DOXYGEN -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>4. Diagrama de Classes UML, POO e Doxygen</h2>
+      <a class="badge-commit" href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/933267a0257bff3a903660e592808ec3947b327d" target="_blank">Commit 933267a &#8599;</a>
+    </div>
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <h3><code>IrObstacleSensor</code> (C++17)</h3>
+          <pre>- devicePath : string
+- rawThreshold : int
+- lastRawValue : int
+- referenceVoltage : double
+- maxAdcResolution : int
+- autoDetectIioChannel() : bool
+------------------------------
++ readRaw() : int
++ getVoltage() : double
++ isObstacleDetected() : bool
++ isCompartmentViolated() : bool
++ getFormattedStatus() : string
++ runTelemetryLoop(tx, n, ms)</pre>
+        </div>
+        <div class="card gold">
+          <h3><code>UdpTransmitter</code> (C++17)</h3>
+          <pre>- serverIp : string
+- serverPort : int
+- sensorId : string
+- sockfd : SOCKET (RAII)
+- destAddr : sockaddr_in
+- initSocket() / cleanupSocket()
+------------------------------
++ sendRawMessage(msg) : bool
++ sendTelemetryJson(raw, V, viol, ts)
++ sendTelemetryCsv(raw, V, viol)
++ setServerIp / getServerIp
++ setServerPort / getServerPort</pre>
+        </div>
+        <div class="card green">
+          <h3><code>TelemetryDashboard</code> (Python)</h3>
+          <pre>- udp_port : int (5000)
+- times, voltages (maxlen=240)
+- threshold : int (2000)
+- is_violated : bool
+- csv_filename : string
+------------------------------
++ init_csv() / build_ui()
++ udp_listener()
++ update_gui_loop()
++ on_threshold_change(val)
++ toggle_pause() / export_csv()</pre>
+        </div>
+      </div>
+      <div class="card">
+        <p><strong>Arquitetura estritamente Orientada a Objetos:</strong> zero variáveis globais ou funções soltas, compatibilidade dual POSIX/WinSock via RAII, e documentação HTML automática gerada via <code>doxygen Doxyfile</code> em <code>docs/doxygen/html/index.html</code>.</p>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Entregas 1 e 3 — Diagrama UML de Classes e Documentação Doxygen</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">5 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: ENTREGA 2 + ANALISE DOS VALORES MEDIDOS -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>5. Compilação, Uso e Análise dos Valores Medidos</h2>
+      <a class="badge-commit" href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/d4b8184e18f8a9e8740954f3aa2461eea57d789d" target="_blank">Commit d4b8184 &#8599;</a>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Compilação Cruzada ARM e Deploy</h3>
+          <ul>
+            <li><strong>Toolchain:</strong> <code>arm-buildroot-linux-gnueabihf-g++</code> (<code>-std=c++17 -O2</code>).</li>
+            <li><strong>CI GitHub Actions:</strong> valida compilação nativa (GCC) e ARM a cada <code>push</code>.</li>
+          </ul>
+<pre># Compilação nativa (PC / testes locais):
+make clean && make
+
+# Compilação cruzada ARM (STM32MP157D-DK1):
+make cross   # ou: bash scripts/cross_build.sh
+
+# Envio via SCP e execução no kit:
+scp app_sensor_arm root@192.168.42.2:/home/root/
+./app_sensor_arm /sys/bus/iio/devices/iio:device0/in_voltage0_raw 0 192.168.42.10 5000</pre>
+        </div>
+        <div class="card green">
+          <h3>Análise dos Valores Medidos (ADC 12 bits)</h3>
+          <p>Conversão linear: <code>V = (ADC / 4095) &times; 3,30 V</code> | Limiar padrão: <code>2000</code> (<code>1,61 V</code>).</p>
+          <table>
+            <thead>
+              <tr><th>Condição da Carga</th><th>Leitura ADC</th><th>Tensão</th><th>Diagnóstico</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tampa Fechada</strong><br/>(Reflexão IR presente)</td>
+                <td><code>&lt; 2000</code><br/>(tip. 100 a 900)</td>
+                <td><code>0,08 V a 0,75 V</code></td>
+                <td><code>Carga: INTEGRA</code></td>
+              </tr>
+              <tr>
+                <td><strong>Tampa Aberta</strong><br/>(Sem reflexão IR)</td>
+                <td><code>&ge; 2000</code><br/>(tip. 3500 a 4095)</td>
+                <td><code>2,80 V a 3,30 V</code></td>
+                <td><code>VIOLACAO DETECTADA!</code></td>
+              </tr>
+            </tbody>
+          </table>
+<pre>[0001] [SENSOR HW-201] Bruto: 850 (0.68 V) | Obstaculo: PRESENTE | Carga: INTEGRA (SEGURA)
+[0004] [SENSOR HW-201] Bruto: 3600 (2.90 V) | Obstaculo: AUSENTE | Carga: VIOLACAO DETECTADA!</pre>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Entrega 2 — Execução Embarcada e Análise de Leituras ADC</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">6 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: ENTREGA 3 -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>6. Entrega 3 — Telemetria UDP e Documentação do Protocolo</h2>
+      <a class="badge-commit" href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506" target="_blank">Commits 8fb8f14 &rarr; 779a547 &#8599;</a>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Commits Organizados da Entrega 3</h3>
+          <ul>
+            <li><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/8fb8f14ee3acf0c8f7d8e74239d2dfbb56da3efe" target="_blank"><code>8fb8f14</code></a> — <strong>feat(udp):</strong> métodos de consulta de endpoint na classe <code>UdpTransmitter</code>.</li>
+            <li><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/e11bb716ee5d292a82047f8c8cfc60ce251f8833" target="_blank"><code>e11bb71</code></a> — <strong>feat(sensor):</strong> laço <code>runTelemetryLoop()</code> em <code>IrObstacleSensor</code> e integração em <code>main.cpp</code>.</li>
+            <li><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/7dad67312bba08f48b49446a084e44d7a196f572" target="_blank"><code>7dad673</code></a> — <strong>build:</strong> inclusão de <code>UdpTransmitter.cpp</code> no <code>Makefile</code>, <code>cross_build.sh</code> e CI.</li>
+            <li><a href="https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506" target="_blank"><code>779a547</code></a> — <strong>docs:</strong> especificação do protocolo UDP, instruções atualizadas e Doxygen.</li>
+          </ul>
+          <p>Também há suporte ao formato compacto CSV via <code>sendTelemetryCsv()</code>.</p>
+        </div>
+        <div class="card gold">
+          <h3>Protocolo de Aplicação UDP/IPv4 (Porta <code>5000</code>)</h3>
+<pre>{
+  "sensor_id": "G3_IR_HW201",
+  "raw": 850,
+  "voltage": 0.68,
+  "unit": "V",
+  "violated": 0,
+  "timestamp": 1762640400125
+}</pre>
+          <table>
+            <thead>
+              <tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>sensor_id</code></td><td><code>string</code></td><td>Identificador do sensor (<code>"G3_IR_HW201"</code>)</td></tr>
+              <tr><td><code>raw</code> / <code>voltage</code></td><td><code>int / double</code></td><td>Leitura ADC bruta (0–4095) e Tensão em Volts</td></tr>
+              <tr><td><code>violated</code></td><td><code>int</code></td><td>Flag de violação (<code>0</code> = íntegra, <code>1</code> = violada)</td></tr>
+              <tr><td><code>timestamp</code></td><td><code>int64</code></td><td>Instante da leitura em ms (época UNIX)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Entrega 3 — Envio da Leitura via UDP e Documentação do Protocolo</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">7 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: CAPTURAS DE TELA DA INTERFACE GRAFICA -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>7. Entrega 4 — Capturas de Tela da Interface Gráfica</h2>
+      <span class="badge-commit">gui/gui_dashboard.py (Tkinter + Matplotlib)</span>
+    </div>
+    <div class="slide-body">
+      <div class="photo-grid">
+        <div class="photo-box">
+          <img src="../docs/gui_carga_integra.png" alt="Interface em estado Carga Integra" />
+          <span>Estado Normal: ADC = 852 (0,69 V &lt; 1,61 V) &rarr; Banner VERDE (CARGA ÍNTEGRA)</span>
+        </div>
+        <div class="photo-box">
+          <img src="../docs/gui_alerta_violacao.png" alt="Interface em estado Alerta de Violacao" />
+          <span>Violação: ADC = 3602 (2,90 V &ge; 1,61 V) &rarr; Banner VERMELHO (ALERTA DE VIOLAÇÃO!)</span>
+        </div>
+      </div>
+      <div class="card green">
+        <p><strong>Funcionalidades:</strong> janela temporal deslizante de 60 s (240 amostras a 4 Hz), slider de ajuste dinâmico de limiar (bônus), indicador de último pacote recebido (bônus) e registro contínuo com exportação CSV.</p>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Entrega 4 — Interface Supervisória em Operação</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">8 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: VIDEO DO SENSOR FUNCIONANDO -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>8. Vídeo de Validação — Sensor HW-201 em Funcionamento</h2>
+      <span class="badge-commit">Validação Prática no Hardware</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <h3>O que observar no vídeo do sensor</h3>
+          <ol>
+            <li><strong>Conexão Física:</strong> Sensor HW-201 alimentado em <code>3,3 V</code> (Pino 4 Power), <code>GND</code> (Pino 7 Power) e saída ligada ao <code>ADC</code> (Pino 5 Analog).</li>
+            <li><strong>Obstáculo Presente (Compartimento Fechado):</strong> O feixe infravermelho reflete na tampa interna, mantendo a saída abaixo do limiar (<code>~0,68 V</code>) e status <strong>CARGA ÍNTEGRA</strong>.</li>
+            <li><strong>Obstáculo Ausente (Abertura/Violação):</strong> Ao afastar o obstáculo, a tensão sobe imediatamente para <code>~2,90 V</code> e o pacote UDP reporta <code>"violated": 1</code>.</li>
+          </ol>
+          <p style="margin-top:8px; color: var(--text-muted); font-size:0.92rem;">
+            <em>Dica: Salve o vídeo em <code>apresentacao/video_sensor.mp4</code> ou selecione-o pelo botão ao lado.</em>
+          </p>
+        </div>
+        <div class="video-container">
+          <video id="sensorVideo" controls preload="metadata" src="video_sensor.mp4"></video>
+          <div>
+            <input type="file" id="videoPicker" accept="video/*" style="display:none" onchange="loadCustomVideo(event)" />
+            <button class="btn-file" onclick="document.getElementById('videoPicker').click()">&#127909; Selecionar Vídeo do Sensor (.mp4 / .mov)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Vídeo de Funcionamento do Sensor HW-201</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">9 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: DEMONSTRACAO AO VIVO -->
+  <section class="slide">
+    <div class="slide-header">
+      <h2>9. Demonstração ao Vivo — Telemetria UDP + Interface Gráfica</h2>
+      <span class="badge-commit">Execução em Tempo Real (Porta UDP 5000)</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card green">
+          <h3>Roteiro da Demonstração ao Vivo</h3>
+          <ol>
+            <li><strong>Iniciar a Central Gráfica (GUI Python):</strong> escuta pacotes JSON na porta UDP <code>5000</code> em thread dedicada.</li>
+            <li><strong>Iniciar o Binário C++17 (<code>app_sensor</code>):</strong> lê o canal do sensor a cada <code>250 ms</code> (4 Hz) e transmite via <code>UdpTransmitter</code>.</li>
+            <li><strong>Transição de Estado ao Vivo:</strong> observar o gráfico deslizante de 60 segundos saltar de <code>~0,68 V</code> (verde) para <code>~2,90 V</code> (alarme vermelho de violação).</li>
+            <li><strong>Recursos Extras:</strong> demonstrar o ajuste dinâmico de limiar no slider e a exportação do log <code>.csv</code>.</li>
+          </ol>
+        </div>
+        <div class="card gold">
+          <h3>Comandos Rápidos para a Demo</h3>
+<pre># Opção A — Launcher automático (1 clique no Windows):
+apresentacao\iniciar_demo_ao_vivo.bat
+
+# Opção B — Em dois terminais separados:
+# Terminal 1 (Interface Gráfica UDP Porta 5000):
+python gui/gui_dashboard.py
+
+# Terminal 2 (Aplicação C++17 transmitindo via UDP):
+./app_sensor mock_sensor_raw.txt 0 127.0.0.1 5000</pre>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Demonstração ao Vivo — Fim da Apresentação</span>
+      <div class="nav-btns">
+        <button onclick="prevSlide()">&#9664; Anterior</button>
+        <span class="slide-num">10 / 10</span>
+        <button onclick="nextSlide()">Próximo &#9654;</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function showSlide(index) {
+    slides[current].classList.remove('active');
+    current = (index + slides.length) % slides.length;
+    slides[current].classList.add('active');
+  }
+  function nextSlide() { showSlide(current + 1); }
+  function prevSlide() { showSlide(current - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      if (document.activeElement.tagName !== 'VIDEO') {
+        e.preventDefault();
+        nextSlide();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      prevSlide();
+    }
+  });
+
+  function loadCustomVideo(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const video = document.getElementById('sensorVideo');
+      video.src = URL.createObjectURL(file);
+      video.play();
+    }
+  }
+</script>
+</body>
+</html>
