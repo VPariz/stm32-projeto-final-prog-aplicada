@@ -9,7 +9,7 @@
 **Instituto Militar de Engenharia — IME**  
 **Seção de Engenharia Elétrica — SE/3**  
 **Disciplina:** Programação Aplicada à Engenharia Elétrica (SE/3 - Eletrônica)  
-**Autores:** João Victor Tavares Pariz ([@VPariz](https://github.com/VPariz)) *(Grupo 3: João Victor Tavares Pariz, Mateus Gustavo Sales da Silva Roma e Daniel de Oliveira Coimbra)*  
+**Autores:** João Victor Tavares Pariz ([@VPariz](https://github.com/VPariz)) *(Grupo 3: João Victor Tavares Pariz, Mateus Roma e Daniel Coimbra)*  
 **Hardware Alvo:** Kit de Desenvolvimento STMicroelectronics **STM32MP157D-DK1** (Linux Embarcado)  
 **Sensor Utilizado:** Módulo Sensor de Obstáculo Infravermelho Reflexivo (**HW-201 / LM393**)  
 
@@ -22,8 +22,8 @@
 | **Entrega 0** | `19/10/2026` | [`entregas/entrega0_conexao_fisica/`](entregas/entrega0_conexao_fisica/) | Fotos da conexão física segura nos headers (`3V3`, `GND` e `ADC`) com o kit desligado. | [`ed3eb08`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/ed3eb08401aefd033d5f62e19240ddd75e9064d9) | ✅ Concluída |
 | **Entrega 1** | `26/10/2026` | [`entregas/entrega1_classe_sensor_doxygen/`](entregas/entrega1_classe_sensor_doxygen/) | Classe C++ `IrObstacleSensor` encapsulada (zero variáveis globais) + Documentação Doxygen. | [`933267a`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/933267a0257bff3a903660e592808ec3947b327d) | ✅ Concluída |
 | **Entrega 2** | `02/11/2026` | [`entregas/entrega2_execucao_embarcada/`](entregas/entrega2_execucao_embarcada/) | Programa funcional no kit STM32MP1 com leitura IIO do sensor + Instruções de compilação e execução. | [`d4b8184`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/d4b8184e18f8a9e8740954f3aa2461eea57d789d) | ✅ Concluída |
-| **Entrega 3** | `09/11/2026` | **[`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/)** | **Envio da leitura do sensor via UDP para o servidor, documentação do protocolo e instruções atualizadas.** | **[`779a547`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506)** | ✅ **Concluída** |
-| **Entrega 4** | `16/11/2026` | [`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/) | Interface gráfica em Python (tempo real, histórico de 60s, alerta visual e log CSV). | *Prevista* | ⏳ Em preparação |
+| **Entrega 3** | `09/11/2026` | [`entregas/entrega3_telemetria_udp/`](entregas/entrega3_telemetria_udp/) | Envio da leitura do sensor via UDP para o servidor, documentação do protocolo e instruções atualizadas. | [`779a547`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506) | ✅ Concluída |
+| **Entrega 4** | `16/11/2026` | **[`entregas/entrega4_interface_grafica/`](entregas/entrega4_interface_grafica/)** | **Interface gráfica em Python (tempo real, histórico de 60s, alerta visual, limiar dinâmico e log CSV) + Slides de Apresentação.** | *Entrega Final* | ✅ **Concluída** |
 
 > **Histórico de Commits da Entrega 3:** [`8fb8f14`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/8fb8f14ee3acf0c8f7d8e74239d2dfbb56da3efe) (*classe UdpTransmitter*) → [`e11bb71`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/e11bb716ee5d292a82047f8c8cfc60ce251f8833) (*integração UDP no sensor e main*) → [`7dad673`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/7dad67312bba08f48b49446a084e44d7a196f572) (*build ARM e CI*) → [`779a547`](https://github.com/VPariz/stm32-projeto-final-prog-aplicada/commit/779a547fadba4555a8a68b8901428c5cfc6f5506) (*documentação do protocolo UDP e instruções*).
 
@@ -92,17 +92,42 @@ classDiagram
 
     class UdpTransmitter {
         -std::string serverIp
-        -uint16_t serverPort
+        -int serverPort
         -std::string sensorId
-        -int socketFd
+        -SOCKET sockfd
+        -struct sockaddr_in destAddr
+        -bool initialized
+        -void initSocket()
+        -void cleanupSocket()
         +UdpTransmitter(ip, port, id)
-        +~UdpTransmitter()
-        +bool sendReading(int rawValue, double voltage, bool violated)
-        +std::string buildJsonPayload(int rawValue, double voltage, bool violated) const
+        +virtual ~UdpTransmitter()
+        +bool sendRawMessage(const std::string& message)
+        +bool sendTelemetryJson(int rawValue, double voltage, bool isViolated, long long timestampMs)
+        +bool sendTelemetryCsv(int rawValue, double voltage, bool isViolated)
+        +void setServerIp(const std::string& newIp)
+        +void setServerPort(int newPort)
         +const std::string& getServerIp() const
-        +uint16_t getServerPort() const
+        +int getServerPort() const
     }
+
+    class TelemetryDashboard {
+        -int udp_port
+        -int max_points
+        -deque times, voltages, raw_values
+        -int threshold
+        -bool is_violated
+        -string csv_filename
+        +init_csv()
+        +build_ui()
+        +udp_listener()
+        +update_gui_loop()
+        +on_threshold_change(val)
+        +toggle_pause()
+        +export_csv()
+    }
+
     IrObstacleSensor ..> UdpTransmitter : envia leitura via UDP
+    UdpTransmitter ..> TelemetryDashboard : JSON UDP porta 5000
 ```
 
 ### Explicação das Classes e Métodos Principais
@@ -114,9 +139,12 @@ classDiagram
   * `isCompartmentViolated()`: Retorna `true` quando a tampa do compartimento é aberta/violada (ausência de reflexão IR $\rightarrow$ saída vai para nível lógico alto $\approx 3{,}3\text{ V}$).
   * `getFormattedStatus()`: Monta a string completa de diagnóstico contendo leitura bruta, tensão em Volts, estado do obstáculo e condição de segurança da carga.
   * `runMonitoringLoop(maxSamples, intervalMs)`: Executa o laço contínuo de aquisição em tempo real e impressão formatada no terminal.
-  * `runTelemetryLoop(transmitter, maxSamples, intervalMs)`: Executa a leitura periódica do sensor e envia cada amostra em tempo real via socket UDP ao servidor remoto.
+  * `runTelemetryLoop(transmitter, maxSamples, intervalMs)`: Executa a leitura periódica do sensor e envia cada amostra em tempo real via `transmitter.sendTelemetryJson()`.
 * **Classe `UdpTransmitter`** ([`include/UdpTransmitter.hpp`](include/UdpTransmitter.hpp) e [`src/UdpTransmitter.cpp`](src/UdpTransmitter.cpp)):
-  * Encapsula a criação e o fechamento (RAII) do socket UDP (`AF_INET`, `SOCK_DGRAM`), serializa os dados em JSON (`buildJsonPayload`) ou CSV (`buildCsvPayload`) e transmite cada leitura via `sendReading()`.
+  * Encapsula a criação (`initSocket()`) e o fechamento seguro RAII (`cleanupSocket()`) do socket UDP (`AF_INET`, `SOCK_DGRAM`), compatível com Linux POSIX e Windows WinSock.
+  * Serializa e transmite os dados via `sendTelemetryJson()`, `sendTelemetryCsv()` ou `sendRawMessage()`.
+* **Classe `TelemetryDashboard`** ([`gui/gui_dashboard.py`](gui/gui_dashboard.py)):
+  * Interface gráfica em Python (`Tkinter` + `Matplotlib`) que escuta a porta UDP `5000` em *thread* dedicada (`udp_listener()`), atualiza o gráfico temporal deslizante de 60 segundos (`update_gui_loop()`), exibe o banner visual de alarme, permite ajustar o limiar de detecção dinamicamente e registra/exporta o histórico em `.csv`.
 * **Ponto de Entrada ([`src/main.cpp`](src/main.cpp)):** Instancia os objetos `IrObstacleSensor` e `UdpTransmitter` dentro de bloco `try/catch` e delega a execução ao método `sensor.runTelemetryLoop()`.
 
 ---
@@ -239,7 +267,7 @@ Durante a execução do binário `app_sensor_arm`, a classe realiza a leitura do
 
 ### Especificação do Protocolo de Telemetria UDP (Entrega 3)
 
-A cada ciclo de leitura, o método `IrObstacleSensor::runTelemetryLoop()` invoca `UdpTransmitter::sendReading()`, que transmite um datagrama **UDP/IPv4** (`SOCK_DGRAM`, sem bloqueio de conexão, porta padrão `5000`) contendo um payload **JSON em UTF-8**:
+A cada ciclo de leitura, o método `IrObstacleSensor::runTelemetryLoop()` invoca `UdpTransmitter::sendTelemetryJson()`, que transmite um datagrama **UDP/IPv4** (`SOCK_DGRAM`, sem bloqueio de conexão, porta padrão `5000`) contendo um payload **JSON em UTF-8**:
 
 ```json
 {"sensor_id":"G3_IR_HW201","raw":850,"voltage":0.68,"unit":"V","violated":0,"timestamp":1762640400125}
@@ -254,11 +282,45 @@ A cada ciclo de leitura, o método `IrObstacleSensor::runTelemetryLoop()` invoca
 | `violated` | `int` | `0` ou `1` | Estado de violação da carga (`0` = compartimento íntegro, `1` = violação detectada). |
 | `timestamp` | `int64` | `1762640400125` | Instante da aquisição em milissegundos desde a época UNIX (`std::chrono::system_clock`). |
 
-Também é disponibilizado o método auxiliar `UdpTransmitter::buildCsvPayload()` no formato compacto `<sensor_id>,<raw>,<voltage>,<violated>,<timestamp>` para integração com coletores seriais/UDP simplificados.
+Também é disponibilizado o método auxiliar `UdpTransmitter::sendTelemetryCsv()` no formato compacto `<sensor_id>,<raw>,<voltage>,<violated>` para integração com coletores seriais/UDP simplificados.
 
 ---
 
-## 🔌 7. Registro das Entregas Anteriores (Entrega 0 e Entrega 1)
+## 🖥️ 7. Interface Gráfica de Monitoramento e Apresentação (Entrega 4)
+
+A central supervisória ([`gui/gui_dashboard.py`](gui/gui_dashboard.py)) foi desenvolvida em **Python 3 (`Tkinter` + `Matplotlib`)** para receber continuamente os datagramas UDP na porta `5000` em *thread* dedicada e exibir em tempo real:
+
+* **Banner de Alerta Visual Dinâmico:** Alterna automaticamente entre **VERDE** (`CARGA INTEGRA`) e **VERMELHO** (`ALERTA: VIOLACAO DETECTADA!`).
+* **Gráfico Temporal Deslizante (Janela de 60 s):** Curva contínua de tensão ($0{,}0\text{ V}$ a $3{,}3\text{ V}$) com linha tracejada indicando o limiar de alarme ativo.
+* **Ajuste Dinâmico de Limiar e Diagnóstico de Link (Bônus):** *Slider* em tempo real (`100` a `4000` ADC), contador de pacotes recebidos e tempo decorrido desde o último pacote.
+* **Registro e Exportação CSV:** Gravação automática contínua em `dados_telemetria_sensor_hw201.csv` e botão `Exportar CSV...`.
+
+### Capturas de Tela da Interface em Operação
+
+| Estado 1 — Compartimento Fechado (`CARGA ÍNTEGRA`) | Estado 2 — Compartimento Aberto (`VIOLAÇÃO DETECTADA`) |
+| :---: | :---: |
+| ![Interface em estado normal](docs/gui_carga_integra.png) | ![Interface em estado de violacao](docs/gui_alerta_violacao.png) |
+
+### Como Executar a Interface e a Demonstração
+```bash
+# Instalar dependências Python (se necessário):
+pip install -r requirements.txt
+
+# Iniciar o dashboard gráfico (escuta na porta UDP 5000):
+python gui/gui_dashboard.py
+
+# Ou iniciar a demonstração completa no Windows (simulador + C++17 + GUI):
+apresentacao\iniciar_demo_ao_vivo.bat
+```
+
+### Materiais da Apresentação
+* [`apresentacao/apresentacao_interativa.html`](apresentacao/apresentacao_interativa.html) — Slides interativos Widescreen (HTML/CSS/JS).
+* [`apresentacao/apresentacao_slides.pdf`](apresentacao/apresentacao_slides.pdf) — Versão em PDF (LaTeX Beamer 16:9).
+* [`apresentacao/ROTEIRO_APRESENTACAO_5_10_MIN.md`](apresentacao/ROTEIRO_APRESENTACAO_5_10_MIN.md) — Roteiro cronometrado de apresentação.
+
+---
+
+## 🔌 8. Registro das Entregas Anteriores (Entrega 0 e Entrega 1)
 
 ### Entrega 0 — Conexão Física Segura (Kit Desligado e Alimentação 3,3 V)
 | Pino no Sensor HW-201 | Conector na Placa STM32MP157D-DK1 | Posição Exata (da direita p/ esquerda) |
@@ -270,7 +332,7 @@ Também é disponibilizado o método auxiliar `UdpTransmitter::buildCsvPayload()
 * Evidências fotográficas da montagem com o kit desligado: [`docs/conexao_placa_desligada.jpg`](docs/conexao_placa_desligada.jpg) e [`docs/conexao_sensor_pinos.jpg`](docs/conexao_sensor_pinos.jpg).
 
 ### Entrega 1 — Documentação Automática Doxygen
-Para regenerar a documentação HTML da classe `IrObstacleSensor`:
+Para regenerar a documentação HTML das classes `IrObstacleSensor` e `UdpTransmitter`:
 ```bash
 doxygen Doxyfile
 # ou:
@@ -280,7 +342,7 @@ make doc
 
 ---
 
-## 📁 8. Estrutura de Diretórios do Repositório
+## 📁 9. Estrutura de Diretórios do Repositório
 
 ```text
 ├── include/
@@ -297,6 +359,12 @@ make doc
 ├── gui/
 │   ├── gui_dashboard.py                   # Interface gráfica Tkinter/Matplotlib (Entrega 4)
 │   └── test_udp_receiver.py               # Receptor UDP de terminal para validação de pacotes
+├── apresentacao/
+│   ├── apresentacao_interativa.html       # Apresentação Widescreen interativa
+│   ├── apresentacao_slides.pdf            # Slides em PDF (LaTeX Beamer 16:9)
+│   ├── apresentacao_slides.tex            # Código-fonte LaTeX dos slides
+│   ├── iniciar_demo_ao_vivo.bat           # Launcher automático da demonstração ao vivo
+│   └── ROTEIRO_APRESENTACAO_5_10_MIN.md   # Roteiro cronometrado de apresentação
 ├── entregas/                              # Pastas dedicadas para cada entrega (Entrega 0 a Entrega 4)
 │   ├── entrega0_conexao_fisica/
 │   ├── entrega1_classe_sensor_doxygen/
@@ -306,6 +374,8 @@ make doc
 ├── docs/
 │   ├── conexao_placa_desligada.jpg        # Foto da conexão nos headers com o kit desligado
 │   ├── conexao_sensor_pinos.jpg           # Foto da conexão nos pinos do sensor HW-201
+│   ├── gui_carga_integra.png              # Captura de tela da GUI em estado normal (verde)
+│   ├── gui_alerta_violacao.png            # Captura de tela da GUI em estado de violação (vermelho)
 │   └── doxygen/html/                      # Documentação Doxygen gerada em HTML
 ├── Doxyfile                               # Configuração do Doxygen
 ├── Makefile                               # Regras de compilação nativa (make) e cruzada ARM (make cross)
