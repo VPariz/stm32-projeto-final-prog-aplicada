@@ -115,8 +115,8 @@
 \begin{frame}{2. Fluxograma e Arquitetura Completa do Sistema}
   \centering
   \begin{tikzpicture}[
-    node distance=0.55cm and 0.65cm,
-    box/.style={rectangle, rounded corners=4pt, draw=imeblue, thick, fill=codebg, align=center, font=\scriptsize, minimum height=1.05cm, text width=2.95cm},
+    node distance=0.6cm and 0.85cm,
+    box/.style={rectangle, rounded corners=4pt, draw=imeblue, thick, fill=codebg, align=center, font=\scriptsize, minimum height=1.05cm, text width=2.70cm},
     hw/.style={box, draw=alertred!80!black, fill=alertred!7},
     linux/.style={box, draw=imeblue, fill=imeblue!7},
     pc/.style={box, draw=okgreen!85!black, fill=okgreen!8},
@@ -135,8 +135,8 @@
     \draw[arr] (sensor) -- (adc);
     \draw[arr] (adc) -- (iio);
     \draw[arr] (iio) -- (cpp);
-    \draw[arr] (cpp) -- node[right,font=\tiny]{$250\text{ ms}$ ($4\text{ Hz}$)} (udp);
-    \draw[arr] (udp) -- node[above,font=\tiny]{Ethernet} (gui);
+    \draw[arr] (cpp) -- node[right=2pt,font=\tiny]{$250\text{ ms}$ ($4\text{ Hz}$)} (udp);
+    \draw[arr] (udp) -- node[above=2pt,font=\tiny]{Ethernet} (gui);
     \draw[arr] (gui) -- (plot);
     \draw[arr] (plot) -- (csv);
   \end{tikzpicture}
@@ -191,7 +191,7 @@
 % ============================================================================
 \begin{frame}[fragile]{4. Diagrama de Classes UML, POO e Doxygen (Entregas 1 e 3)}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.33\textwidth}
+    \begin{column}{0.315\textwidth}
       \begin{block}{\texttt{IrObstacleSensor} (C++17)}
         \tiny
         \textbf{Privado:}
@@ -214,7 +214,7 @@
       \end{block}
     \end{column}
 
-    \begin{column}{0.33\textwidth}
+    \begin{column}{0.325\textwidth}
       \begin{block}{\texttt{UdpTransmitter} (C++17)}
         \tiny
         \textbf{Privado:}
@@ -390,17 +390,17 @@ scp app_sensor_arm root@192.168.42.2:/home/root/
 % ============================================================================
 \begin{frame}[fragile]{8. V\'{i}deo de Valida\c{c}\~{a}o no Hardware e Demonstra\c{c}\~{a}o ao Vivo}
   \begin{block}{Arquitetura em Execu\c{c}\~{a}o na Demonstra\c{c}\~{a}o}
-    \centering
-    \textbf{Aplicativo C++17 (\texttt{IrObstacleSensor} + \texttt{UdpTransmitter})}
-    $\xrightarrow{\text{JSON via Socket UDP (Porta 5000)}}$
-    \textbf{Dashboard Python (\texttt{TelemetryDashboard})}
+    \centering\small
+    \textbf{App C++17 (\texttt{IrObstacleSensor} + \texttt{UdpTransmitter})}
+    $\xrightarrow{\text{JSON UDP (Porta 5000)}}$
+    \textbf{Dashboard Python (\texttt{gui\_dashboard.py})}
   \end{block}
 
   \vspace{0.1cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
 \begin{lstlisting}[language=bash]
-# 1. Iniciar a Central Grafica (Servidor UDP 5000):
+# 1. Iniciar Central Grafica (UDP 5000):
 python gui/gui_dashboard.py
 
 # 2. Iniciar o Transmissor C++17 (Placa ou Local):
